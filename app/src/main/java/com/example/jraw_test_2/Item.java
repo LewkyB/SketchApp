@@ -3,12 +3,12 @@ package com.example.jraw_test_2;
 public class Item {
 
     private String mImageUrl;
-    private String mCreator;
+    private String mTitle;
     private int mLikes;
 
-    public Item(String imageUrl, String creator, int likes) {
+    public Item(String imageUrl, String title, int likes) {
         mImageUrl = imageUrl;
-        mCreator = creator;
+        mTitle = title;
         mLikes = likes;
     }
 
@@ -16,8 +16,8 @@ public class Item {
         return mImageUrl;
     }
 
-    public String getCreator() {
-        return mCreator;
+    public String getTitle() {
+        return mTitle;
     }
 
     public int getLikeCount() {
