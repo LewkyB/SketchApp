@@ -56,23 +56,31 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected Void doInBackground(Void... voids) {
 
-            // client setup
+            // JRAW client setup
             UserAgent userAgent = new UserAgent("android", "github.com/lewkyb", "v1", "lookingfordriver");
             Credentials credentials = Credentials.userlessApp("uKb1rMTs_heYQA", UUID.randomUUID());
             NetworkAdapter networkAdapter = new OkHttpNetworkAdapter(userAgent);
             RedditClient redditClient = OAuthHelper.automatic(networkAdapter, credentials);
 
+            // TODO: allow for user to choose subreddits
             DefaultPaginator<Submission> earthPorn = redditClient.subreddits("aww", "spaceporn").posts().build();
 
             Listing<Submission> submissions = earthPorn.next();
             for (Submission s : submissions) {
 
-                String imageUrl = s.getUrl();       // URL
-                String postTitle = s.getTitle();    // Post Title
-                int likeCount = s.getScore();       // Upvotes - Downvotes = Score
+                // TODO: avoid pulling gif or video
+                if (!s.isSelfPost() && s.getUrl().contains("jpg")) {
 
-                // add data to Item object
-                mItemList.add(new Item(imageUrl, postTitle, likeCount));
+                    String imageUrl = s.getUrl();       // URL
+                    System.out.println("imageURL: " +imageUrl);
+
+                    String postTitle = s.getTitle();    // Post Title
+                    System.out.println("postTitle: " + postTitle);
+
+                    int likeCount = s.getScore();       // Upvotes - Downvotes = Score
+                    // add data to Item object
+                    mItemList.add(new Item(imageUrl, postTitle, likeCount));
+                }
             }
 
             // not clear on what adapters do yet
