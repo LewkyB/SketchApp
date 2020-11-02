@@ -1,5 +1,10 @@
 package com.example.jraw_test_2;
 
+/*
+
+    Purpose: Store information taken from JRAW
+
+ */
 public class Item {
 
     private String mImageUrl;

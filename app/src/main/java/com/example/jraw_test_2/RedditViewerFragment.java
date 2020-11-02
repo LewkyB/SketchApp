@@ -1,11 +1,16 @@
 package com.example.jraw_test_2;
 
-import androidx.appcompat.app.AppCompatActivity;
+import android.content.Context;
+import android.os.AsyncTask;
+import android.os.Bundle;
+
+import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.os.AsyncTask;
-import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import net.dean.jraw.RedditClient;
 import net.dean.jraw.http.NetworkAdapter;
@@ -20,29 +25,34 @@ import net.dean.jraw.pagination.DefaultPaginator;
 import java.util.ArrayList;
 import java.util.UUID;
 
-public class RedditViewer extends AppCompatActivity {
+public class RedditViewerFragment extends Fragment {
 
     private RecyclerView mRecyclerView;
     private Adapter mAdapter;
     private ArrayList<Item> mItemList;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
 
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_reddit_viewer);
-
+        View view = inflater.inflate(R.layout.fragment_reddit_viewer, container, false);
 
         // setup recycle viewer
-        mRecyclerView = findViewById(R.id.recycler_view);
+        mRecyclerView = view.findViewById(R.id.recycler_view);
         mRecyclerView.setHasFixedSize(true); // saves memory because size doesn't change
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
+
+        return view;
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
         // instantiate list?
         mItemList = new ArrayList<>();
 
-        new RedditViewer.MyTask().execute();
-
+        new RedditViewerFragment.MyTask().execute();
     }
 
     // This task is created to allow for networking on the MainActivity thread.
@@ -70,19 +80,16 @@ public class RedditViewer extends AppCompatActivity {
                 if (!s.isSelfPost() && s.getUrl().contains("jpg")) {
 
                     String imageUrl = s.getUrl();       // URL
-                    System.out.println("imageURL: " +imageUrl);
-
                     String postTitle = s.getTitle();    // Post Title
-                    System.out.println("postTitle: " + postTitle);
-
                     int likeCount = s.getScore();       // Upvotes - Downvotes = Score
+
                     // add data to Item object
                     mItemList.add(new Item(imageUrl, postTitle, likeCount));
                 }
             }
 
-            // not clear on what adapters do yet
-            mAdapter = new Adapter(RedditViewer.this, mItemList);
+            // send list to RecyclerView for display
+            mAdapter = new Adapter(getContext(), mItemList);
 
             return null;
         }
@@ -103,6 +110,6 @@ public class RedditViewer extends AppCompatActivity {
 
             super.onPostExecute(aVoid);
         }
-
     }
+
 }

@@ -15,8 +15,13 @@ import java.util.ArrayList;
 import com.squareup.picasso.Picasso;
 
 
-// https://www.youtube.com/watch?v=mMzT4fSHU-8&list=PLrnPJCHvNZuBCiCxN8JPFI57Zhr5SusRL&index=3
+/*
 
+    Purpose: get list and display to recyclerview with picasso
+
+    see also: https://stackoverflow.com/questions/3674951/whats-the-role-of-adapters-in-android
+
+ */
 public class Adapter extends RecyclerView.Adapter <Adapter.ViewHolder> {
 
     private Context mContext;
@@ -42,10 +47,12 @@ public class Adapter extends RecyclerView.Adapter <Adapter.ViewHolder> {
         String postTitle = currentItem.getTitle();
         int likeCount = currentItem.getLikeCount();
 
+        // use picasso to pull and show image on card
+        Picasso.with(mContext).load(imageUrl).fit().centerInside().into(holder.mImageView);
+
+        // change what appears on card
         holder.mTextViewTitle.setText(postTitle);
         holder.mTextViewLikes.setText("Likes: " + likeCount);
-
-        Picasso.with(mContext).load(imageUrl).fit().centerInside().into(holder.mImageView);
     }
 
     @Override
