@@ -80,8 +80,8 @@ public class MainActivity extends AppCompatActivity {
                             break;
                         case R.id.nav_canvas:
                             // TODO: implement canvas
-//                            selectedFragment = new CanvasFragment();
-//                            break;
+                            selectedFragment = new PaintFragment();
+                            break;
                         case R.id.nav_profile:
                             // TODO: create profile and switch LoginFragment() with ProfileFragment()
                             selectedFragment = new LoginFragment();
