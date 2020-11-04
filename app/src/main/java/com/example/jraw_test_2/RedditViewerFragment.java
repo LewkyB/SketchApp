@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,17 +24,25 @@ import net.dean.jraw.oauth.OAuthHelper;
 import net.dean.jraw.pagination.DefaultPaginator;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.UUID;
 
 public class RedditViewerFragment extends Fragment {
 
+    private static final String TAG = "RedditViewerFragment";
+
     private RecyclerView mRecyclerView;
     private Adapter mAdapter;
     private ArrayList<Item> mItemList;
+    private Bundle itemBundle;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
+        Log.d(TAG, "onCreateView");
+        itemBundle = new Bundle();
+        mItemList = new ArrayList<>();
 
         View view = inflater.inflate(R.layout.fragment_reddit_viewer, container, false);
 
@@ -42,74 +51,23 @@ public class RedditViewerFragment extends Fragment {
         mRecyclerView.setHasFixedSize(true); // saves memory because size doesn't change
         mRecyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
 
-        return view;
-    }
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+        // get Bundle passed from MainActivity
+        itemBundle = getArguments();
 
-        // instantiate list?
-        mItemList = new ArrayList<>();
+        if (itemBundle != null) {
 
-        new RedditViewerFragment.MyTask().execute();
-    }
+            // get ArrayList out of the Bundle from MainActivity
+            mItemList = itemBundle.getParcelableArrayList("redditItemList");
 
-    // This task is created to allow for networking on the MainActivity thread.
-    //
-    // Sets up all OAuth2 for Reddit API using JRAW. Using JRAW it creates an object
-    // that contains subreddit and post data.
-    private class MyTask extends AsyncTask<Void, Void, Void> {
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-
-            // JRAW client setup
-            UserAgent userAgent = new UserAgent("android", "github.com/lewkyb", "v1", "lookingfordriver");
-            Credentials credentials = Credentials.userlessApp("uKb1rMTs_heYQA", UUID.randomUUID());
-            NetworkAdapter networkAdapter = new OkHttpNetworkAdapter(userAgent);
-            RedditClient redditClient = OAuthHelper.automatic(networkAdapter, credentials);
-
-            // TODO: allow for user to choose subreddits
-            DefaultPaginator<Submission> earthPorn = redditClient.subreddits("aww", "spaceporn").posts().build();
-
-            Listing<Submission> submissions = earthPorn.next();
-            for (Submission s : submissions) {
-
-                // TODO: avoid pulling gif or video
-                if (!s.isSelfPost() && s.getUrl().contains("jpg")) {
-
-                    String imageUrl = s.getUrl();       // URL
-                    String postTitle = s.getTitle();    // Post Title
-                    int likeCount = s.getScore();       // Upvotes - Downvotes = Score
-
-                    // add data to Item object
-                    mItemList.add(new Item(imageUrl, postTitle, likeCount));
-                }
-            }
-
-            // send list to RecyclerView for display
             mAdapter = new Adapter(getContext(), mItemList);
-
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-
-            /*
-                attempted to run this within the doInBackground(), but
-                it gave the error:
-
-                    android.view.ViewRootImpl$CalledFromWrongThreadException: Only the
-                    original thread that created a view hierarchy can touch its views
-
-                moving this line here fixed the issue, but why? scope?
-             */
             mRecyclerView.setAdapter(mAdapter);
-
-            super.onPostExecute(aVoid);
+            Log.d(TAG, "setAdapter:success");
+        } else {
+            Log.d(TAG, "setAdapter:failed");
         }
+
+        return view;
     }
 
 }
