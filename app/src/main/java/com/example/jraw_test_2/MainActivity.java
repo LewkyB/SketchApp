@@ -41,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
 
     public ArrayList<Item> mItemList;
     public Bundle itemBundle;
+    public RedditLoader redditLoader;
 
 
     @Override
@@ -48,11 +49,20 @@ public class MainActivity extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
 
-        mItemList = new ArrayList<>();
+//        mItemList = new ArrayList<Item>();
         itemBundle = new Bundle();
+        redditLoader = new RedditLoader();
+
+        redditLoader.new createListTask().execute();
+
+        mItemList = redditLoader.getItemList();
+
+//        redditLoader.new getMorePosts().execute();
+
+
 
         // populate mItemList with posts from reddit using JRAW
-        new MainActivity.MyTask().execute();
+//        new MainActivity.MyTask().execute();
 
         setContentView(R.layout.activity_main);
 

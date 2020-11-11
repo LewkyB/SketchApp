@@ -36,6 +36,8 @@ public class RedditViewerFragment extends Fragment {
     private ArrayList<Item> mItemList;
     private Bundle itemBundle;
 
+    private EndlessRecyclerViewScrollListener scrollListener;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -48,9 +50,12 @@ public class RedditViewerFragment extends Fragment {
 
         // setup recycle viewer
         mRecyclerView = view.findViewById(R.id.recycler_view);
-        mRecyclerView.setHasFixedSize(true); // saves memory because size doesn't change
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
 
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(view.getContext());
+        mRecyclerView.setLayoutManager(linearLayoutManager);
+
+        mRecyclerView.setHasFixedSize(true); // saves memory because size doesn't change
+//        mRecyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
 
         // get Bundle passed from MainActivity
         itemBundle = getArguments();
@@ -67,7 +72,19 @@ public class RedditViewerFragment extends Fragment {
             Log.d(TAG, "setAdapter:failed");
         }
 
+        scrollListener = new EndlessRecyclerViewScrollListener() {
+            @Override
+            public void onLoadMore(int page, int totalItemsCount, RecyclerView view) {
+                loadNextDataFromApi(page);
+            }
+        };
+        mRecyclerView.addOnScrollListener(scrollListener);
+
         return view;
+    }
+    public void loadNextDataFromApi(int offset) {
+        RedditLoader redditLoader = new RedditLoader();
+        redditLoader.new getMorePosts().execute();
     }
 
 }
