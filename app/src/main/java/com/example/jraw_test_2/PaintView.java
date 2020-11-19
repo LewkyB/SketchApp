@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.GridLayout;
@@ -32,6 +33,7 @@ public class PaintView extends View {
         brush.setStrokeWidth(6f);
     }
 
+    // forces PaintView to be square
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
@@ -63,4 +65,15 @@ public class PaintView extends View {
         postInvalidate();
         return false;
     }
+
+    public void undo() {
+
+    }
+
+    public void clear() { path.reset(); }
+
+    public void submitDrawing() {
+
+    }
+
 }
