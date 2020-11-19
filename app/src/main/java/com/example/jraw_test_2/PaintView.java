@@ -8,6 +8,7 @@ import android.graphics.Path;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.GridLayout;
 
 import java.text.AttributedCharacterIterator;
 import java.util.ArrayList;
@@ -32,6 +33,14 @@ public class PaintView extends View {
     }
 
     @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        int size, width = getMeasuredWidth(), height = getMeasuredHeight();
+        size = width > height ? height : width;
+        setMeasuredDimension(size, size);
+    }
+
+    @Override
     protected void onDraw(Canvas canvas) {
         canvas.drawPath(path, brush);
     }
@@ -45,9 +54,9 @@ public class PaintView extends View {
             case MotionEvent.ACTION_DOWN:
                 path.moveTo(pointX, pointY);
                 return true;
-                case MotionEvent.ACTION_MOVE:
-                    path.lineTo(pointX, pointY);
-                    break;
+            case MotionEvent.ACTION_MOVE:
+                path.lineTo(pointX, pointY);
+                break;
             default:
                 return false;
         }
