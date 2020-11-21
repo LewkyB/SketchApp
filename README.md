@@ -6,7 +6,7 @@
 - [x] login/registration fragments
 - [x] implement firebase
 - [ ] add ML files
-- [ ] blow up view when selecting RecyclerView item
+- [x] blow up view when selecting RecyclerView item
 - [ ] comment system using firebase
 - [ ] show comments in recyclerview selection
 - [x] implement canvas
