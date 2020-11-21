@@ -3,11 +3,17 @@ package com.example.jraw_test_2;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import androidx.transition.PatternPathMotion;
 
+import android.accessibilityservice.AccessibilityService;
+import android.graphics.Region;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.MotionEvent;
+import android.view.ScaleGestureDetector;
+import android.view.View;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
@@ -24,14 +30,16 @@ import net.dean.jraw.pagination.DefaultPaginator;
 import java.util.ArrayList;
 import java.util.UUID;
 
+
 public class MainActivity extends AppCompatActivity {
 
-    // TODO: canvas page
     // TODO: profile page
 
     // RedditViewer
     // TODO: enlarge card and offer comment section with upvote/downvote
-
+    protected void onPhotoClick(MenuItem item){
+        // Enlarge view of current selected MenuItem and allow the user to zoom etc.
+    }
     // LOGIN
     // TODO: have login screen go to another screen with registering/logging in
     // TODO: separate out login and registration?
@@ -98,6 +106,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             };
 
+
     private class MyTask extends AsyncTask<Void, Void, Void> {
 
         @Override
@@ -116,19 +125,18 @@ public class MainActivity extends AppCompatActivity {
             Listing<Submission> submissions = earthPorn.next();
             for (Submission s : submissions) {
 
-                // TODO: avoid pulling gif or video
+                // avoid pulling gif or video
                 if (!s.isSelfPost() && s.getUrl().contains("jpg")) {
 
                     String imageUrl = s.getUrl();       // URL
-                    System.out.println(imageUrl);
-                    String postTitle = s.getTitle();    // Post Title
-                    int likeCount = s.getScore();       // Upvotes - Downvotes = Score
 
                     // add data to Item object
-                    mItemList.add(new Item(imageUrl, postTitle, likeCount));
+                    mItemList.add(new Item(imageUrl));
                 }
             }
             return null;
         }
     }
+
+
 }

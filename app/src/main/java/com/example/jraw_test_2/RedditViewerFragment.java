@@ -1,31 +1,16 @@
 package com.example.jraw_test_2;
 
-import android.content.Context;
-import android.os.AsyncTask;
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import net.dean.jraw.RedditClient;
-import net.dean.jraw.http.NetworkAdapter;
-import net.dean.jraw.http.OkHttpNetworkAdapter;
-import net.dean.jraw.http.UserAgent;
-import net.dean.jraw.models.Listing;
-import net.dean.jraw.models.Submission;
-import net.dean.jraw.oauth.Credentials;
-import net.dean.jraw.oauth.OAuthHelper;
-import net.dean.jraw.pagination.DefaultPaginator;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.UUID;
 
 public class RedditViewerFragment extends Fragment {
 
@@ -49,7 +34,8 @@ public class RedditViewerFragment extends Fragment {
         // setup recycle viewer
         mRecyclerView = view.findViewById(R.id.recycler_view);
         mRecyclerView.setHasFixedSize(true); // saves memory because size doesn't change
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
+//        mRecyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
+        mRecyclerView.setLayoutManager(new GridLayoutManager(view.getContext(), 2));
 
 
         // get Bundle passed from MainActivity
@@ -66,8 +52,8 @@ public class RedditViewerFragment extends Fragment {
         } else {
             Log.d(TAG, "setAdapter:failed");
         }
-
         return view;
     }
+
 
 }
