@@ -7,6 +7,7 @@ import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -16,6 +17,8 @@ import java.util.ArrayList;
 // TODO: save path and store it as bitmap?
 
 public class PaintView extends View {
+
+    public static final String TAG = "PaintView";
 
     private Path path;
     private Paint mPaint;
@@ -27,18 +30,14 @@ public class PaintView extends View {
 
         path = new Path();
         mPaint = new Paint();
-
-        mPaint.setAntiAlias(true);
-        mPaint.setColor(Color.RED);
-        mPaint.setStyle(Paint.Style.STROKE);
-        mPaint.setStrokeJoin(Paint.Join.ROUND);
-        mPaint.setStrokeWidth(6f);
+        paintViewConfig(); // setup Paint
 
     }
 
     @Override
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
+        Log.d(TAG, "PaintView onSizeChanged()");
 
         mBitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
         canvas = new Canvas(mBitmap);
@@ -48,7 +47,6 @@ public class PaintView extends View {
 
     @Override
     protected void onDraw(Canvas canvas) {
-
         canvas.drawPath(path, mPaint);
     }
 
@@ -71,7 +69,13 @@ public class PaintView extends View {
         return false;
     }
 
-    public Bitmap getBitmap() {
-        return mBitmap;
+    private void paintViewConfig() {
+        Log.d(TAG, "PaintView paintViewConfig()");
+
+        mPaint.setAntiAlias(true);
+        mPaint.setColor(Color.RED);
+        mPaint.setStyle(Paint.Style.STROKE);
+        mPaint.setStrokeJoin(Paint.Join.ROUND);
+        mPaint.setStrokeWidth(6f);
     }
 }

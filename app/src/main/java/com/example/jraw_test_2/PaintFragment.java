@@ -4,21 +4,27 @@ import android.graphics.Bitmap;
 import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageMetadata;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
@@ -26,22 +32,25 @@ import java.io.ByteArrayOutputStream;
 
 public class PaintFragment extends Fragment implements View.OnClickListener {
 
+    public static final String TAG = "PaintFragment";
+
     PaintView paintView;
     private Button button;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+        Log.d(TAG, "PaintFragment onCreateView()");
+
         View view = inflater.inflate(R.layout.fragment_paint, container, false);
 
-        paintView = (PaintView) view.findViewById(R.id.PaintView);
+        paintView = view.findViewById(R.id.PaintView);
 
-        button = (Button) view.findViewById(R.id.upload_button);
+        button = view.findViewById(R.id.upload_button);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                storeBitmapFirebase(paintView.getBitmap());
+                storeBitmapFirebase();
             }
         });
 
@@ -58,7 +67,10 @@ public class PaintFragment extends Fragment implements View.OnClickListener {
         super.onDestroy();
     }
 
-    public void storeBitmapFirebase(Bitmap bitmap) {
+    // takes image drawn on canvas as a bitmap, converts to jpg, then uploads to firebase storage
+    public void storeBitmapFirebase() {
+
+        Log.d(TAG, "starting storeBitmapFirebase()");
 
         FirebaseStorage storage = FirebaseStorage.getInstance();
 
@@ -87,21 +99,21 @@ public class PaintFragment extends Fragment implements View.OnClickListener {
         uploadTask.addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception exception) {
-                // Handle unsuccessful uploads
-                // TODO: add failure toast
+                Log.d(TAG, "Firebase storeBitmap:failure");
+                Toast.makeText(getContext(), "Upload Failure!", Toast.LENGTH_LONG).show();
             }
         }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                // handle successful uploads
-                // TODO: add success toast
+                Log.d(TAG, "Firebase storeBitmap:success");
+                Toast.makeText(getContext(), "Upload Success!", Toast.LENGTH_LONG).show();
+
             }
         });
-
     }
 
     @Override
     public void onClick(View v) {
-
+        // forced to implement this method by IDE
     }
 }

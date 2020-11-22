@@ -23,7 +23,7 @@ import com.google.firebase.database.FirebaseDatabase;
 
 public class LoginFragment extends Fragment {
 
-    private static final String TAG = "RegisterUser";
+    private static final String TAG = "LoginFragment";
 
     private FirebaseAuth mAuth;
 
@@ -34,6 +34,7 @@ public class LoginFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        Log.d(TAG, "LoginFragment onCreateView()");
 
         View view = inflater.inflate(R.layout.fragment_login, container, false);
 
@@ -54,18 +55,20 @@ public class LoginFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        mAuth = FirebaseAuth.getInstance();
-
+        Log.d(TAG, "LoginFragment onCreate()");
+        mAuth = FirebaseAuth.getInstance(); // start FirebaseAuth
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        FirebaseUser currentUser = mAuth.getCurrentUser();
+        Log.d(TAG, "LoginFragment onStart()");
+        FirebaseUser currentUser = mAuth.getCurrentUser(); // check to see if logged in
     }
 
     private void registerUser() {
+        Log.d(TAG, "LoginFragment registerUser()");
+
         String email = editTextEmail.getEditText().getText().toString().trim();
         String password = editTextPassword.getEditText().getText().toString().trim();
 
