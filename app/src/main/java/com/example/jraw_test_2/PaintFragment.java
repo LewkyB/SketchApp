@@ -29,6 +29,7 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
+import java.util.UUID;
 
 public class PaintFragment extends Fragment implements View.OnClickListener {
 
@@ -73,14 +74,16 @@ public class PaintFragment extends Fragment implements View.OnClickListener {
         Log.d(TAG, "starting storeBitmapFirebase()");
 
         FirebaseStorage storage = FirebaseStorage.getInstance();
-
         StorageReference storageRef = storage.getReferenceFromUrl("gs://jrawtest.appspot.com");
 
+        // create random UUID for unique file name
+        String randomUUID = UUID.randomUUID().toString();
+
         // Create a reference to "mountains.jpg"
-        StorageReference mountainsRef = storageRef.child("mountains.jpg");
+        StorageReference mountainsRef = storageRef.child(randomUUID);
 
         // Create a reference to 'images/mountains.jpg'
-        StorageReference mountainImagesRef = storageRef.child("images/mountains.jpg");
+        StorageReference mountainImagesRef = storageRef.child("user_images/" + randomUUID);
 
         // While the file names are the same, the references point to different files
         mountainsRef.getName().equals(mountainImagesRef.getName());    // true
@@ -107,7 +110,6 @@ public class PaintFragment extends Fragment implements View.OnClickListener {
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                 Log.d(TAG, "Firebase storeBitmap:success");
                 Toast.makeText(getContext(), "Upload Success!", Toast.LENGTH_LONG).show();
-
             }
         });
     }

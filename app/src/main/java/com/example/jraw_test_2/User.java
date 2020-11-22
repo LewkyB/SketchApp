@@ -1,5 +1,7 @@
 package com.example.jraw_test_2;
 
+import java.util.ArrayList;
+
 /*
 
     Purpose: store data for users which is then used to write to database
@@ -8,6 +10,7 @@ package com.example.jraw_test_2;
 public class User {
 
     public String email;
+    public ArrayList<String> imageList;
 //    public String username;
 //    public String phone_number;
 
