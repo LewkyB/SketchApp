@@ -29,10 +29,11 @@ public class PaintView extends View {
         mPaint = new Paint();
 
         mPaint.setAntiAlias(true);
-        mPaint.setColor(Color.BLACK);
+        mPaint.setColor(Color.RED);
         mPaint.setStyle(Paint.Style.STROKE);
         mPaint.setStrokeJoin(Paint.Join.ROUND);
         mPaint.setStrokeWidth(6f);
+
     }
 
     @Override
@@ -41,12 +42,13 @@ public class PaintView extends View {
 
         mBitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
         canvas = new Canvas(mBitmap);
+        canvas.drawColor(Color.WHITE);
+        canvas.drawBitmap(mBitmap, 0, 0, mPaint);
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
 
-        canvas.drawBitmap(mBitmap, 0, 0, null);
         canvas.drawPath(path, mPaint);
     }
 

@@ -3,6 +3,7 @@ package com.example.jraw_test_2;
 import android.graphics.Bitmap;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -73,7 +74,11 @@ public class PaintFragment extends Fragment implements View.OnClickListener {
         mountainsRef.getName().equals(mountainImagesRef.getName());    // true
         mountainsRef.getPath().equals(mountainImagesRef.getPath());    // false
 
-        Bitmap bmp = paintView.getBitmap();
+        // get bitmap from paintView
+        paintView.setDrawingCacheEnabled(true);
+        paintView.buildDrawingCache();
+        Bitmap bmp = paintView.getDrawingCache();
+
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         bmp.compress(Bitmap.CompressFormat.JPEG, 100, baos);
         byte[] data = baos.toByteArray();
@@ -83,12 +88,13 @@ public class PaintFragment extends Fragment implements View.OnClickListener {
             @Override
             public void onFailure(@NonNull Exception exception) {
                 // Handle unsuccessful uploads
+                // TODO: add failure toast
             }
         }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                // taskSnapshot.getMetadata() contains file metadata such as size, content-type, and download URL.
-//                Uri downloadUrl = taskSnapshot.getDownloadUrl();
+                // handle successful uploads
+                // TODO: add success toast
             }
         });
 
@@ -96,6 +102,6 @@ public class PaintFragment extends Fragment implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
-        
+
     }
 }
