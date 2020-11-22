@@ -18,11 +18,13 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageMetadata;
 import com.google.firebase.storage.StorageReference;
@@ -34,6 +36,8 @@ import java.util.UUID;
 public class PaintFragment extends Fragment implements View.OnClickListener {
 
     public static final String TAG = "PaintFragment";
+
+    FirebaseAuth mAuth;
 
     PaintView paintView;
     private Button button;
@@ -61,16 +65,24 @@ public class PaintFragment extends Fragment implements View.OnClickListener {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d(TAG, "PaintFragment onCreate()");
+        mAuth = FirebaseAuth.getInstance(); // start FirebaseAuth
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        Log.d(TAG, "PaintFragment onStart()");
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
+        Log.d(TAG, "PaintFragment onDestroy()");
     }
 
     // takes image drawn on canvas as a bitmap, converts to jpg, then uploads to firebase storage
     public void storeBitmapFirebase() {
-
         Log.d(TAG, "starting storeBitmapFirebase()");
 
         FirebaseStorage storage = FirebaseStorage.getInstance();
@@ -79,12 +91,15 @@ public class PaintFragment extends Fragment implements View.OnClickListener {
         // create random UUID for unique file name
         String randomUUID = UUID.randomUUID().toString();
 
+        // TODO: make mountainsRef more relevant
         // Create a reference to "mountains.jpg"
         StorageReference mountainsRef = storageRef.child(randomUUID);
 
+        // TODO: make mountainsImagesRef more relevant
         // Create a reference to 'images/mountains.jpg'
         StorageReference mountainImagesRef = storageRef.child("user_images/" + randomUUID);
 
+        // TODO: figure out what getName and getPath do
         // While the file names are the same, the references point to different files
         mountainsRef.getName().equals(mountainImagesRef.getName());    // true
         mountainsRef.getPath().equals(mountainImagesRef.getPath());    // false
@@ -110,6 +125,21 @@ public class PaintFragment extends Fragment implements View.OnClickListener {
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                 Log.d(TAG, "Firebase storeBitmap:success");
                 Toast.makeText(getContext(), "Upload Success!", Toast.LENGTH_LONG).show();
+
+                // add image's randomUUID to list of images the user has submitted
+                FirebaseDatabase.getInstance().getReference("Users")
+                        .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                        .child("imageList").push().setValue(randomUUID)
+                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            Log.d(TAG, "Firebase storeBitmapFirebase add image to user's image list:success");
+                        } else {
+                            Log.d(TAG, "Firebase storeBitmapFirebase add image to user's image list:failure");
+                        }
+                    }
+                });
             }
         });
     }
