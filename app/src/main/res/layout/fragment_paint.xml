@@ -21,4 +21,11 @@
 
     </com.example.jraw_test_2.PaintView>
 
+    <Button
+        android:id="@+id/upload_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="upload" />
+
+
 </RelativeLayout>
