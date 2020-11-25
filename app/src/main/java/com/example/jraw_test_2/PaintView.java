@@ -14,7 +14,7 @@ import android.view.View;
 import java.text.AttributedCharacterIterator;
 import java.util.ArrayList;
 
-// TODO: save path and store it as bitmap?
+// TODO: fix paint and canvas colors
 
 public class PaintView extends View {
 

@@ -51,6 +51,7 @@ public class PaintFragment extends Fragment implements View.OnClickListener {
 
         paintView = view.findViewById(R.id.PaintView);
 
+        // used for testing upload functionality
         button = view.findViewById(R.id.upload_button);
         button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -91,29 +92,28 @@ public class PaintFragment extends Fragment implements View.OnClickListener {
         // create random UUID for unique file name
         String randomUUID = UUID.randomUUID().toString();
 
-        // TODO: make mountainsRef more relevant
         // Create a reference to "mountains.jpg"
-        StorageReference mountainsRef = storageRef.child(randomUUID);
+        StorageReference imageRef = storageRef.child(randomUUID);
 
-        // TODO: make mountainsImagesRef more relevant
         // Create a reference to 'images/mountains.jpg'
-        StorageReference mountainImagesRef = storageRef.child("user_images/" + randomUUID);
+        StorageReference userImagesRef = storageRef.child("user_images/" + randomUUID);
 
-        // TODO: figure out what getName and getPath do
         // While the file names are the same, the references point to different files
-        mountainsRef.getName().equals(mountainImagesRef.getName());    // true
-        mountainsRef.getPath().equals(mountainImagesRef.getPath());    // false
+        imageRef.getName().equals(userImagesRef.getName());    // true
+        imageRef.getPath().equals(userImagesRef.getPath());    // false
 
         // get bitmap from paintView
         paintView.setDrawingCacheEnabled(true);
         paintView.buildDrawingCache();
         Bitmap bmp = paintView.getDrawingCache();
 
+        // convert image
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         bmp.compress(Bitmap.CompressFormat.JPEG, 100, baos);
         byte[] data = baos.toByteArray();
 
-        UploadTask uploadTask = mountainsRef.putBytes(data);
+        // send image to firebase storage
+        UploadTask uploadTask = imageRef.putBytes(data);
         uploadTask.addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception exception) {

@@ -85,15 +85,10 @@ public class LoginFragment extends Fragment {
                         if (task.isSuccessful()) {
                             Log.d(TAG, "Firebase createUserWithEmailAndPassword:success");
 
-                            // TODO: get rid of using the User class when populating the database
-                            // object for storing user info in database
-                            User user = new User(email);
-
-                            // TODO: get rid of using the User class when populating the database
                             // create UID in database and put user's email into UID as child
                             FirebaseDatabase.getInstance().getReference("Users")
-                                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                                    .setValue(user).addOnCompleteListener(new OnCompleteListener<Void>() { // TODO: do something like .setChild("email").setValue(email) instead
+                                    .child(FirebaseAuth.getInstance().getCurrentUser().getUid()).child("email")
+                                    .setValue(email).addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
                                     if (task.isSuccessful()) {

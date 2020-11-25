@@ -26,7 +26,6 @@ import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity {
 
-    // TODO: canvas page
     // TODO: profile page
 
     // RedditViewer
@@ -45,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.d(TAG, "onCreate: onCreate");
 
         super.onCreate(savedInstanceState);
 
@@ -81,7 +81,6 @@ public class MainActivity extends AppCompatActivity {
                             selectedFragment.setArguments(itemBundle);
                             break;
                         case R.id.nav_canvas:
-                            // TODO: implement canvas
                             selectedFragment = new PaintFragment();
                             break;
                         case R.id.nav_profile:
