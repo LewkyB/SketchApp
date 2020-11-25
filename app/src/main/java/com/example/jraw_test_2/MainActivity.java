@@ -26,7 +26,6 @@ import java.util.UUID;
 
 public class MainActivity extends AppCompatActivity {
 
-    // TODO: canvas page
     // TODO: profile page
 
     // RedditViewer
@@ -45,11 +44,13 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.d(TAG, "onCreate: onCreate");
 
         super.onCreate(savedInstanceState);
 
+        // holds data pulled from reddit with JRAW
         mItemList = new ArrayList<>();
-        itemBundle = new Bundle();
+        itemBundle = new Bundle(); // used for passing data between fragments
 
         // populate mItemList with posts from reddit using JRAW
         new MainActivity.MyTask().execute();
@@ -65,6 +66,7 @@ public class MainActivity extends AppCompatActivity {
                 new LoginFragment()).commit();
     }
 
+    // function used to swap between fragments
     private BottomNavigationView.OnNavigationItemSelectedListener navListener =
             new BottomNavigationView.OnNavigationItemSelectedListener() {
                 @Override
@@ -79,7 +81,6 @@ public class MainActivity extends AppCompatActivity {
                             selectedFragment.setArguments(itemBundle);
                             break;
                         case R.id.nav_canvas:
-                            // TODO: implement canvas
                             selectedFragment = new PaintFragment();
                             break;
                         case R.id.nav_profile:
@@ -98,12 +99,15 @@ public class MainActivity extends AppCompatActivity {
                 }
             };
 
+    // AsyncTask has to be used to circumvent "no network activity on main thread" error
+    // pulls data from reddit using JRAW and populates mItemList
     private class MyTask extends AsyncTask<Void, Void, Void> {
 
         @Override
         protected Void doInBackground(Void... voids) {
 
             Log.d(TAG, "starting MyTask AsyncTask");
+
             // JRAW client setup
             UserAgent userAgent = new UserAgent("android", "github.com/lewkyb", "v1", "lookingfordriver");
             Credentials credentials = Credentials.userlessApp("uKb1rMTs_heYQA", UUID.randomUUID());
@@ -120,7 +124,7 @@ public class MainActivity extends AppCompatActivity {
                 if (!s.isSelfPost() && s.getUrl().contains("jpg")) {
 
                     String imageUrl = s.getUrl();       // URL
-                    System.out.println(imageUrl);
+//                    System.out.println(imageUrl);
                     String postTitle = s.getTitle();    // Post Title
                     int likeCount = s.getScore();       // Upvotes - Downvotes = Score
 
