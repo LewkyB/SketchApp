@@ -11,14 +11,14 @@ import android.widget.RelativeLayout;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.squareup.picasso.Picasso;
+import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
 
 
 /*
 
-    Purpose: get list and display to recyclerview with picasso
+    Purpose: get list and display to recyclerview with Glide
 
     see also: https://stackoverflow.com/questions/3674951/whats-the-role-of-adapters-in-android
 
@@ -46,11 +46,10 @@ public class Adapter extends RecyclerView.Adapter <Adapter.ViewHolder> {
 
         String imageUrl = currentItem.getImageUrl();
 
-        // use picasso to pull and show image on card
-        Picasso.with(mContext)
+        // use Glide to pull and show image on card
+        Glide.with(mContext)
                 .load(imageUrl)
-                .fit()
-                .noFade()
+                .centerCrop()
                 .into(holder.mImageView);
 
         holder.parentLayout.setOnClickListener(new View.OnClickListener(){

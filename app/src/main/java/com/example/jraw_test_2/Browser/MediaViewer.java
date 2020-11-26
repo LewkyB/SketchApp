@@ -10,8 +10,8 @@ public class MediaViewer extends AppCompatActivity {
 
     public MediaViewer (){
         super(viewer_media);
-        setContentView(viewer_media);
     }
+
     @Override
     protected void onCreate(Bundle savedInstanceState){
         super.onCreate(savedInstanceState);
