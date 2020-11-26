@@ -1,10 +1,10 @@
 package com.example.jraw_test_2;
 
-import android.os.Bundle;
-
 import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
+import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
+import android.os.Bundle;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.LayoutInflater;
@@ -21,22 +21,23 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.FirebaseDatabase;
 
-public class LoginFragment extends Fragment {
+public class LoginActivity extends AppCompatActivity {
 
-    private static final String TAG = "LoginFragment";
+    private static final String TAG = "LoginActivity";
 
     private FirebaseAuth mAuth;
 
     private TextInputLayout editTextEmail, editTextPassword;
 
     private Button registerButton;
+    private Button signinButton;
 
-    @Override
+
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         Log.d(TAG, "LoginFragment onCreateView()");
 
-        View view = inflater.inflate(R.layout.fragment_login, container, false);
+        View view = inflater.inflate(R.layout.activity_login, container, false);
 
         editTextEmail = view.findViewById(R.id.edit_register_email);
         editTextPassword = view.findViewById(R.id.edit_register_password);
@@ -46,6 +47,14 @@ public class LoginFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 registerUser();
+            }
+        });
+
+        signinButton = (Button) view.findViewById(R.id.registerUser_button_signin);
+        signinButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                signIn();
             }
         });
 
@@ -93,7 +102,7 @@ public class LoginFragment extends Fragment {
                                 public void onComplete(@NonNull Task<Void> task) {
                                     if (task.isSuccessful()) {
                                         Log.d(TAG, "Firebase createUserWithEmailAndPassword:success");
-                                        Toast.makeText(getContext(), "Register success!", Toast.LENGTH_LONG).show();
+                                        Toast.makeText(LoginActivity.this, "Registration Success", Toast.LENGTH_SHORT).show();
                                     } else {
                                         Log.d(TAG, "FirebaseDatabase write createUserWithEmailandPassword:failure", task.getException());
                                     }
@@ -102,7 +111,7 @@ public class LoginFragment extends Fragment {
                         } else {
                             // If sign in fails, display a message to the user.
                             Log.w(TAG, "createUserWithEmail:failure", task.getException());
-                            Toast.makeText(getContext(), "Authentication failed.", Toast.LENGTH_LONG).show();
+                            Toast.makeText(LoginActivity.this, "Authentication Failed", Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
@@ -124,10 +133,12 @@ public class LoginFragment extends Fragment {
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (task.isSuccessful()) {
                     Log.d(TAG, "signInWithEmail:success");
-                    Toast.makeText(getContext(), "Sign in success!", Toast.LENGTH_LONG).show();
+                    Toast.makeText(LoginActivity.this, "Welcome to SketchApp", Toast.LENGTH_SHORT).show();
+                    startActivity(new Intent(getApplicationContext(),MainActivity.class));
+
                 } else {
                     Log.d(TAG, "signInWithEmail:failure", task.getException());
-                    Toast.makeText(getContext(), "Sign in failure!", Toast.LENGTH_LONG).show();
+                    Toast.makeText(LoginActivity.this, "signin failure", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -164,4 +175,5 @@ public class LoginFragment extends Fragment {
 
         return valid;
     }
+
 }

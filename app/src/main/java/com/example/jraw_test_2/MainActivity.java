@@ -63,7 +63,7 @@ public class MainActivity extends AppCompatActivity {
 
         // set default fragment
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
-                new LoginFragment()).commit();
+                new ProfileFragment()).commit();
     }
 
     // function used to swap between fragments
@@ -72,6 +72,7 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public boolean onNavigationItemSelected(@NonNull MenuItem item) {
                     Fragment selectedFragment = null;
+
 
                     switch (item.getItemId()) {
                         case R.id.nav_browser:
@@ -85,7 +86,7 @@ public class MainActivity extends AppCompatActivity {
                             break;
                         case R.id.nav_profile:
                             // TODO: create profile and switch LoginFragment() with ProfileFragment()
-                            selectedFragment = new LoginFragment();
+                            selectedFragment = new ProfileFragment();
                             break;
                     }
 
