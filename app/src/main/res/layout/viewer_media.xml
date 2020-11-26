@@ -5,9 +5,19 @@
     android:layout_height="match_parent"
     android:background="@color/black">
 
-    <ImageView
-        android:id="@+id/viewer_image"
+    <fragment
+        android:id="@+id/f_image"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="387dp"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="0dp" />
+
+    <fragment
+        android:id="@+id/f_comment"
+        android:layout_width="match_parent"
+        android:layout_height="769dp"
+        android:layout_below="@+id/f_image"
+        android:layout_alignParentBottom="true"
         android:layout_marginBottom="0dp" />
+
 </RelativeLayout>
