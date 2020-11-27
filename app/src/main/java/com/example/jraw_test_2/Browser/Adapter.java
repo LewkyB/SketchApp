@@ -26,9 +26,9 @@ import java.util.ArrayList;
 public class Adapter extends RecyclerView.Adapter <Adapter.ViewHolder> {
 
     private Context mContext;
-    private ArrayList<Item> mItemList;
+    private ArrayList<com.example.jraw_test_2.Item> mItemList;
 
-    public Adapter(Context context, ArrayList <Item> list) {
+    public Adapter(Context context, ArrayList <com.example.jraw_test_2.Item> list) {
         mContext = context;
         mItemList = list;
     }
@@ -42,11 +42,12 @@ public class Adapter extends RecyclerView.Adapter <Adapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        Item currentItem = mItemList.get(position);
+        com.example.jraw_test_2.Item currentItem = mItemList.get(position);
 
         String imageUrl = currentItem.getImageUrl();
 
         // use Glide to pull and show image on card
+
         Glide.with(mContext)
                 .load(imageUrl)
                 .centerCrop()
@@ -55,7 +56,7 @@ public class Adapter extends RecyclerView.Adapter <Adapter.ViewHolder> {
         holder.parentLayout.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view){
-                Intent intent = new Intent(mContext, MediaViewer.class);
+                Intent intent = new Intent(mContext, com.example.jraw_test_2.MediaViewer.class);
                 intent.putExtra("image_url", imageUrl);
                 mContext.startActivity(intent);
             }

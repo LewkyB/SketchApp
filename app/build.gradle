@@ -10,7 +10,7 @@ android {
 
     defaultConfig {
         applicationId "com.example.jraw_test_2"
-        minSdkVersion 16
+        minSdkVersion 19
         targetSdkVersion 30
         versionCode 1
         versionName "1.0"
@@ -58,7 +58,9 @@ dependencies {
     implementation 'net.dean.jraw:JRAW-Android:1.1.0'
 
     // PhotoViewAttacher From Chris Banes
-    implementation 'com.github.chrisbanes:PhotoView:2.3.0'
+//    implementation 'com.github.chrisbanes:PhotoView:2.3.0'
+    // StfalconImageViewer
+    implementation 'com.github.stfalcon:stfalcon-imageviewer:1.0.1'
     implementation 'com.android.support:multidex:1.0.3'
 
 
