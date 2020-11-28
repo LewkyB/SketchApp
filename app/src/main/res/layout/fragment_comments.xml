@@ -7,14 +7,15 @@
     android:layout_height="match_parent"
     android:id="@+id/fragment_comment">
 
-    <LinearLayout
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/commentRecycler"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:scrollbars="vertical"
+        android:background="@color/dimGray"
         android:orientation="vertical"
+        android:paddingTop="2dp"
         app:layout_constraintTop_toTopOf="parent"
-        tools:layout_editor_absoluteX="0dp">
-
-
-    </LinearLayout>
+        tools:layout_editor_absoluteX="0dp"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

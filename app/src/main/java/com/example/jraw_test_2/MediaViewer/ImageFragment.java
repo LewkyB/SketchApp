@@ -39,6 +39,7 @@ public class ImageFragment extends Fragment {
 
         Glide.with(getContext())
                 .load(imgUrl)
+                .centerCrop()
                 .into(imageView);
 
         imageView.setOnClickListener(new View.OnClickListener(){

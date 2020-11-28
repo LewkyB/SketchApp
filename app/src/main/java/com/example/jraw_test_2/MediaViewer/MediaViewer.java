@@ -22,7 +22,12 @@ public class MediaViewer extends AppCompatActivity {
             getSupportFragmentManager()
                     .beginTransaction()
                     .setReorderingAllowed(true)
-                    .add(R.id.f_image, ImageFragment.class, bundle)
+                    .add(R.id.f_image, com.example.jraw_test_2.ImageFragment.class, bundle)
+                    .commit();
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .setReorderingAllowed(true)
+                    .add(R.id.f_comment, com.example.jraw_test_2.CommentFragment.class, bundle)
                     .commit();
         }
     }
