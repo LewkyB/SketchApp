@@ -1,25 +1,30 @@
 package com.example.jraw_test_2;
 
 import android.content.Context;
+
+import android.content.Intent;
+
 import android.net.Uri;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.TextView;
+import android.widget.RelativeLayout;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+
 import java.util.ArrayList;
 
-import com.bumptech.glide.Glide;
-import com.squareup.picasso.Picasso;
+
 
 
 /*
 
-    Purpose: get list and display to recyclerview with picasso
+    Purpose: get list and display to recyclerview with Glide
 
     see also: https://stackoverflow.com/questions/3674951/whats-the-role-of-adapters-in-android
 
@@ -28,9 +33,9 @@ public class Adapter extends RecyclerView.Adapter <Adapter.ViewHolder> {
     private static final String TAG = "Adapter";
 
     private Context mContext;
-    private ArrayList<Item> mItemList;
+    private ArrayList<com.example.jraw_test_2.Item> mItemList;
 
-    public Adapter(Context context, ArrayList <Item> list) {
+    public Adapter(Context context, ArrayList <com.example.jraw_test_2.Item> list) {
         mContext = context;
         mItemList = list;
     }
@@ -44,18 +49,27 @@ public class Adapter extends RecyclerView.Adapter <Adapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        Item currentItem = mItemList.get(position);
+        com.example.jraw_test_2.Item currentItem = mItemList.get(position);
 
         String imageUrl = currentItem.getImageUrl();
-        String postTitle = currentItem.getTitle();
-        int likeCount = currentItem.getLikeCount();
 
-        // use picasso to pull and show image on card
-        Picasso.with(mContext).load(imageUrl).fit().centerInside().into(holder.mImageView);
-
-        // change what appears on card
-        holder.mTextViewTitle.setText(postTitle);
-        holder.mTextViewLikes.setText("Likes: " + likeCount);
+        // use Glide to pull and show image on card
+        try {
+            Glide.with(mContext)
+                    .load(imageUrl)
+                    .centerCrop()
+                    .into(holder.mImageView);
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+        holder.parentLayout.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view){
+                Intent intent = new Intent(mContext, com.example.jraw_test_2.MediaViewer.class);
+                intent.putExtra("image_url", imageUrl);
+                mContext.startActivity(intent);
+            }
+        });
     }
 
     @Override
@@ -66,14 +80,14 @@ public class Adapter extends RecyclerView.Adapter <Adapter.ViewHolder> {
     public class ViewHolder extends RecyclerView.ViewHolder {
 
         public ImageView mImageView;
-        public TextView mTextViewTitle;
-        public TextView mTextViewLikes;
+        public RelativeLayout parentLayout;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             mImageView = itemView.findViewById(R.id.image_view);
-            mTextViewTitle = itemView.findViewById(R.id.text_view_title);
-            mTextViewLikes = itemView.findViewById(R.id.text_view_likes);
+            parentLayout = itemView.findViewById(R.id.parent_layout);
         }
+
+
     }
 }
