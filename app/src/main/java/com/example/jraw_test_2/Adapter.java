@@ -1,7 +1,11 @@
 package com.example.jraw_test_2;
 
 import android.content.Context;
+
 import android.content.Intent;
+
+import android.net.Uri;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +20,8 @@ import com.bumptech.glide.Glide;
 import java.util.ArrayList;
 
 
+
+
 /*
 
     Purpose: get list and display to recyclerview with Glide
@@ -24,6 +30,7 @@ import java.util.ArrayList;
 
  */
 public class Adapter extends RecyclerView.Adapter <Adapter.ViewHolder> {
+    private static final String TAG = "Adapter";
 
     private Context mContext;
     private ArrayList<com.example.jraw_test_2.Item> mItemList;
