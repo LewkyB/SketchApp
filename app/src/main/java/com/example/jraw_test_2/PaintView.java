@@ -9,9 +9,6 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 
-import java.text.AttributedCharacterIterator;
-import java.util.ArrayList;
-
 
 // TODO: save path and store it as bitmap?
 

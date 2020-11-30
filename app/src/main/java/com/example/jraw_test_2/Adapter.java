@@ -47,12 +47,14 @@ public class Adapter extends RecyclerView.Adapter <Adapter.ViewHolder> {
         String imageUrl = currentItem.getImageUrl();
 
         // use Glide to pull and show image on card
-
-        Glide.with(mContext)
-                .load(imageUrl)
-                .centerCrop()
-                .into(holder.mImageView);
-
+        try {
+            Glide.with(mContext)
+                    .load(imageUrl)
+                    .centerCrop()
+                    .into(holder.mImageView);
+        }catch(Exception e){
+            e.printStackTrace();
+        }
         holder.parentLayout.setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View view){

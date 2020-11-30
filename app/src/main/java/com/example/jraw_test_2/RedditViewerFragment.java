@@ -45,7 +45,6 @@ public class RedditViewerFragment extends Fragment {
 
             // get ArrayList out of the Bundle from MainActivity
             mItemList = itemBundle.getParcelableArrayList("redditItemList");
-
             mAdapter = new Adapter(getContext(), mItemList);
             mRecyclerView.setAdapter(mAdapter);
             Log.d(TAG, "setAdapter:success");
@@ -54,6 +53,4 @@ public class RedditViewerFragment extends Fragment {
         }
         return view;
     }
-
-
 }
