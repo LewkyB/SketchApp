@@ -14,19 +14,13 @@ import android.os.Parcelable;
 public class Item implements Parcelable {
 
     private String mImageUrl;
-    private String mTitle;
-    private int mLikes;
 
-    public Item(String imageUrl, String title, int likes) {
+    public Item(String imageUrl) {
         mImageUrl = imageUrl;
-        mTitle = title;
-        mLikes = likes;
     }
 
     protected Item(Parcel in) {
         mImageUrl = in.readString();
-        mTitle = in.readString();
-        mLikes = in.readInt();
     }
 
     public static final Creator<Item> CREATOR = new Creator<Item>() {
@@ -45,14 +39,6 @@ public class Item implements Parcelable {
         return mImageUrl;
     }
 
-    public String getTitle() {
-        return mTitle;
-    }
-
-    public int getLikeCount() {
-        return mLikes;
-    }
-
     @Override
     public int describeContents() {
         return 0;
@@ -61,7 +47,5 @@ public class Item implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(mImageUrl);
-        dest.writeString(mTitle);
-        dest.writeInt(mLikes);
     }
 }
