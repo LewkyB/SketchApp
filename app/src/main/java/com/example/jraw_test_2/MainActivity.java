@@ -165,7 +165,7 @@ public class MainActivity extends AppCompatActivity {
                         HashMap<?, ?> post = (HashMap<?, ?>) i.getValue();
                         if (post != null) {
                             image[0] = post.get("imageUrl").toString();
-                            mItemList.add(new Item(image[0]));
+                            mItemList.add(0, new Item(image[0]));
                         }
                     }
                 }

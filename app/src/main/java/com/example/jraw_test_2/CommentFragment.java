@@ -21,60 +21,55 @@ public class CommentFragment extends Fragment {
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
-    private String postKey;
+    private String imageUrl;
+    private ArrayList<CommentItem> commentList = new ArrayList<>();
+
 
     public CommentFragment() { super(R.layout.fragment_comments); }
 
     @Override
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        if(savedInstanceState != null) {
-            postKey = savedInstanceState.getString("postId");
-        }
+        imageUrl = requireArguments().getString("image_url");
+        createCommentView(view, imageUrl);
+    }
 
+    private void createCommentView(View view, String imageUrl){
         //Get Firebase Comments table and add to commentList
-        ArrayList<CommentItem> commentList = getComments(postKey);;
-
+        commentList = getComments(imageUrl);
         mRecyclerView = view.findViewById(R.id.commentRecycler);
         mLayoutManager = new LinearLayoutManager(getContext());
         mAdapter = new CommentAdapter(commentList);
-
         mRecyclerView.setLayoutManager(mLayoutManager);
         mRecyclerView.setAdapter(mAdapter);
-
-
     }
 
-    private ArrayList<CommentItem> getComments(String postKey){
+    private ArrayList<CommentItem> getComments(String imageUrl){
         ArrayList<CommentItem> returnList = new ArrayList<>();
         DatabaseReference ref = FirebaseDatabase
                 .getInstance()
-                .getReference()
-                .child("posts");
-        ref.orderByChild("postId")
-                .equalTo(postKey)
+                .getReference("posts");
+
+        ref.orderByChild("imageUrl")
+                .equalTo(imageUrl)
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        for(DataSnapshot i : snapshot.getChildren()){
-                            HashMap<?,?> iTop = (HashMap<?,?>) i.getValue();
-                            if(iTop != null) {
-                                HashMap<?,?> commentHash = (HashMap<?, ?>) iTop.get("comments");
-                                if(commentHash != null){
-                                    for(Object key : commentHash.keySet()) {
-                                        HashMap<?, ?> hash = (HashMap<?, ?>) commentHash.get(key);
-                                        returnList.add(new CommentItem(
-                                            hash.get("username").toString(),
-                                            hash.get("commentText").toString()));
-                                    }
+                        for(DataSnapshot i : snapshot.getChildren()) {
+                            HashMap<?, ?> snapHash = (HashMap<?, ?>) i.getValue();
+                            HashMap<?, ?> commentHash = (HashMap<?, ?>) snapHash.get("comments");
+                            if(commentHash != null) {
+                                for (Object key : commentHash.keySet()) {
+                                    HashMap<?, ?> comments = (HashMap<?, ?>) commentHash.get(key.toString());
+                                    returnList.add(new CommentItem(
+                                            comments.get("username").toString(),
+                                            comments.get("commentText").toString()));
                                 }
                             }
                         }
                     }
-
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
-
                     }
                 });
         return returnList;
