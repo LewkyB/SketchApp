@@ -2,6 +2,7 @@ package com.example.jraw_test_2;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.EditText;
@@ -20,6 +21,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import static com.example.jraw_test_2.R.layout.viewer_media;
@@ -31,6 +33,7 @@ public class MediaViewer extends AppCompatActivity {
 
     private EditText newComment;
     private String commentString;
+    private ArrayList<CommentItem> commentList;
     private Bundle bundle = new Bundle();
 
     public MediaViewer (){
@@ -42,7 +45,35 @@ public class MediaViewer extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         if(getIntent().hasExtra("image_url")) {
             String imgUrl = getIntent().getStringExtra("image_url");
+            commentList = getComments(imgUrl);
             bundle.putString("image_url", imgUrl);
+            bundle.putParcelableArrayList("comment_list", commentList);
+
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .setReorderingAllowed(false)
+                    .add(R.id.f_image, com.example.jraw_test_2.ImageFragment.class, bundle)
+                    .commit();
+
+
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .setReorderingAllowed(false)
+                    .add(R.id.f_comment, com.example.jraw_test_2.CommentFragment.class, bundle)
+                    .commit();
+
+            Handler handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    getSupportFragmentManager()
+                            .beginTransaction()
+                            .setReorderingAllowed(false)
+                            .replace(R.id.f_comment, com.example.jraw_test_2.CommentFragment.class, bundle)
+                            .commit();
+                }
+            }, 1000);
+
 
             DatabaseReference ref = FirebaseDatabase
                     .getInstance()
@@ -67,18 +98,6 @@ public class MediaViewer extends AppCompatActivity {
                         }
                     });
 
-            getSupportFragmentManager()
-                    .beginTransaction()
-                    .setReorderingAllowed(false)
-                    .add(R.id.f_image, com.example.jraw_test_2.ImageFragment.class, bundle)
-                    .commit();
-            getSupportFragmentManager()
-                    .beginTransaction()
-                    .setReorderingAllowed(false)
-                    .add(R.id.f_comment, com.example.jraw_test_2.CommentFragment.class, bundle)
-                    .commit();
-
-
             newComment = (EditText)findViewById(R.id.newComment);
             newComment.setOnKeyListener(new EditText.OnKeyListener(){
                 public boolean onKey(View v, int keyCode, KeyEvent event){
@@ -86,11 +105,18 @@ public class MediaViewer extends AppCompatActivity {
                         commentString = String.valueOf(newComment.getText());
                         addComment(commentString, postKey[0]);
                         newComment.getText().clear();
-                        getSupportFragmentManager()
-                                .beginTransaction()
-                                .setReorderingAllowed(false)
-                                .replace(R.id.f_comment, com.example.jraw_test_2.CommentFragment.class, bundle)
-                                .commit();
+                        commentList = getComments(imgUrl);
+                        bundle.putParcelableArrayList("comment_list", commentList);
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                getSupportFragmentManager()
+                                        .beginTransaction()
+                                        .setReorderingAllowed(false)
+                                        .replace(R.id.f_comment, com.example.jraw_test_2.CommentFragment.class, bundle)
+                                        .commit();
+                            }
+                        }, 1000);
                         return true;
                     }
                     return false;
@@ -127,5 +153,36 @@ public class MediaViewer extends AppCompatActivity {
         }else{
             Toast.makeText(mContext, "You must login before commenting!", Toast.LENGTH_LONG).show();
         }
+    }
+
+    private ArrayList<CommentItem> getComments(String imageUrl){
+        ArrayList<CommentItem> returnList = new ArrayList<>();
+        DatabaseReference ref = FirebaseDatabase
+                .getInstance()
+                .getReference("posts");
+
+        ref.orderByChild("imageUrl")
+                .equalTo(imageUrl)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        for(DataSnapshot i : snapshot.getChildren()) {
+                            HashMap<?, ?> snapHash = (HashMap<?, ?>) i.getValue();
+                            HashMap<?, ?> commentHash = (HashMap<?, ?>) snapHash.get("comments");
+                            if(commentHash != null) {
+                                for (Object key : commentHash.keySet()) {
+                                    HashMap<?, ?> comments = (HashMap<?, ?>) commentHash.get(key.toString());
+                                    returnList.add(0, new CommentItem(
+                                            comments.get("username").toString(),
+                                            comments.get("commentText").toString()));
+                                }
+                            }
+                        }
+                    }
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                    }
+                });
+        return returnList;
     }
 }
