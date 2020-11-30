@@ -1,6 +1,9 @@
 package com.example.jraw_test_2;
 
+import com.example.jraw_test_2.Classifier;
+
 import android.graphics.Bitmap;
+import android.graphics.ColorSpace;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -8,6 +11,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
+import android.app.Activity;
+import android.content.res.AssetFileDescriptor;
+
+import android.graphics.BitmapFactory;
+
+import java.io.*;
+import java.nio.channels.*;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -23,22 +33,9 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
-import org.tensorflow.lite.Interpreter;
-import org.tensorflow.lite.support.common.FileUtil;
-import org.tensorflow.lite.support.common.TensorProcessor;
-import org.tensorflow.lite.support.image.ImageProcessor;
-import org.tensorflow.lite.support.image.TensorImage;
-import org.tensorflow.lite.support.image.ops.ResizeOp;
-import org.tensorflow.lite.support.image.ops.ResizeWithCropOrPadOp;
-import org.tensorflow.lite.support.image.ops.Rot90Op;
-import org.tensorflow.lite.support.label.TensorLabel;
-import org.tensorflow.lite.support.tensorbuffer.TensorBuffer;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.nio.MappedByteBuffer;
-import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 public class PaintFragment extends Fragment implements View.OnClickListener {
@@ -52,23 +49,24 @@ public class PaintFragment extends Fragment implements View.OnClickListener {
 
     Bitmap bmp;
 
-
-    private MappedByteBuffer tfliteModel;
-    protected Interpreter tflite;
-    private final Interpreter.Options tfliteOptions = new Interpreter.Options();
-    private TensorImage inputImageBuffer;
-
-    private List<String> labels;
-
-    private TensorBuffer outputProbabilityBuffer;
-    private TensorProcessor probabilityProcessor;
+    private Classifier tf;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         Log.d(TAG, "PaintFragment onCreateView()");
 
-        View view = inflater.inflate(R.layout.fragment_paint, container, false);
+        View view = inflater.inflate(R.layout.fragment_paint, contain
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
+er, false);
 
         paintView = view.findViewById(R.id.PaintView);
 
@@ -93,6 +91,7 @@ public class PaintFragment extends Fragment implements View.OnClickListener {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "PaintFragment onCreate()");
         mAuth = FirebaseAuth.getInstance(); // start FirebaseAuth
+        tf = new Classifier(this.getActivity()); //Create the classifier
     }
 
     @Override
@@ -131,7 +130,7 @@ public class PaintFragment extends Fragment implements View.OnClickListener {
         paintView.setDrawingCacheEnabled(true);
         paintView.buildDrawingCache();
         bmp = paintView.getDrawingCache();
-        classifier(bmp);
+        Classifier.ModelOutput out = tf.classify(bmp);
 
         // convert image
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -168,39 +167,6 @@ public class PaintFragment extends Fragment implements View.OnClickListener {
                 });
             }
         });
-    }
-
-    public void classifier(Bitmap bitmap) throws IOException {
-
-        tfliteModel = FileUtil.loadMappedFile(this.getActivity(), "converted_model.tflite");
-//        tfliteOptions.setNumThreads(1);
-        tflite = new Interpreter(tfliteModel, tfliteOptions);
-        labels = FileUtil.loadLabels(this.getActivity(), "labels.txt");
-
-        inputImageBuffer = loadImage(bitmap);
-
-        tflite.run(inputImageBuffer.getBuffer(), outputProbabilityBuffer.getBuffer().rewind());
-
-        Map<String, Float> labeledProbability =
-                new TensorLabel(labels, probabilityProcessor.process(outputProbabilityBuffer))
-                        .getMapWithFloatValue();
-
-    }
-
-    private TensorImage loadImage(final Bitmap bitmap) {
-        // Loads bitmap into a TensorImage.
-        inputImageBuffer.load(bitmap);
-
-        // Creates processor for the TensorImage.
-        int cropSize = Math.min(bitmap.getWidth(), bitmap.getHeight());
-        // TODO(b/143564309): Fuse ops inside ImageProcessor.
-        // TODO: Define an ImageProcessor from TFLite Support Library to do preprocessing
-        ImageProcessor imageProcessor =
-                new ImageProcessor.Builder()
-                        .add(new ResizeWithCropOrPadOp(cropSize, cropSize))
-                        .add(new ResizeOp(250, 250, ResizeOp.ResizeMethod.NEAREST_NEIGHBOR))
-                        .build();
-        return imageProcessor.process(inputImageBuffer);
     }
 
     @Override
