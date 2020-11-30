@@ -56,17 +56,7 @@ public class PaintFragment extends Fragment implements View.OnClickListener {
                              Bundle savedInstanceState) {
         Log.d(TAG, "PaintFragment onCreateView()");
 
-        View view = inflater.inflate(R.layout.fragment_paint, contain
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
-er, false);
+        View view = inflater.inflate(R.layout.fragment_paint, container, false);
 
         paintView = view.findViewById(R.id.PaintView);
 
