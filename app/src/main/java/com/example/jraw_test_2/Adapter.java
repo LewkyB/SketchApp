@@ -1,6 +1,7 @@
 package com.example.jraw_test_2;
 
 import android.content.Context;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 
+import com.bumptech.glide.Glide;
 import com.squareup.picasso.Picasso;
 
 
@@ -23,6 +25,7 @@ import com.squareup.picasso.Picasso;
 
  */
 public class Adapter extends RecyclerView.Adapter <Adapter.ViewHolder> {
+    private static final String TAG = "Adapter";
 
     private Context mContext;
     private ArrayList<Item> mItemList;
