@@ -10,8 +10,8 @@ import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Button;
 
-import java.text.AttributedCharacterIterator;
 import java.util.ArrayList;
 
 
@@ -20,6 +20,7 @@ public class PaintView extends View {
     public static final String TAG = "PaintView";
 
     private Path path;
+    private ArrayList<Path> paths;
     private Paint mPaint;
     public Canvas canvas;
     public Bitmap mBitmap;
@@ -28,6 +29,7 @@ public class PaintView extends View {
         super(context, attrs);
 
         path = new Path();
+        paths = new ArrayList<Path>();
         mPaint = new Paint();
         paintViewConfig(); // setup Paint
 
@@ -54,6 +56,7 @@ public class PaintView extends View {
 
     @Override
     protected void onDraw(Canvas canvas) {
+        for (Path p : paths) canvas.drawPath(p, mPaint);
         canvas.drawPath(path, mPaint);
     }
 
@@ -66,14 +69,27 @@ public class PaintView extends View {
             case MotionEvent.ACTION_DOWN:
                 path.moveTo(pointX, pointY);
                 return true;
-                case MotionEvent.ACTION_MOVE:
-                    path.lineTo(pointX, pointY);
-                    break;
-            default:
-                return false;
+            case MotionEvent.ACTION_MOVE:
+                path.lineTo(pointX, pointY);
+                break;
+            case MotionEvent.ACTION_UP:
+                paths.add(path);
+                path = new Path();
+                break;
         }
         postInvalidate();
         return false;
+    }
+
+    public void undo() {
+        if (paths.size() > 0) paths.remove(paths.size()-1);
+        invalidate();
+    }
+
+    public void clear() {
+        paths = new ArrayList<Path>();
+        path = new Path();
+        invalidate();
     }
 
     private void paintViewConfig() {
@@ -84,5 +100,6 @@ public class PaintView extends View {
         mPaint.setStyle(Paint.Style.STROKE);
         mPaint.setStrokeJoin(Paint.Join.ROUND);
         mPaint.setStrokeWidth(6f);
+
     }
 }
