@@ -13,11 +13,9 @@
         android:id="@+id/PaintView"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:layout_marginBottom="3dp"
-        android:layout_marginLeft="5dp"
-        android:layout_marginRight="5dp"
-        android:layout_marginTop="3dp"
-        android:background="@android:color/transparent" >
+        android:layout_alignParentBottom="true"
+        android:layout_centerInParent="true"
+        android:background="@drawable/paintview_background">
 
     </com.example.jraw_test_2.PaintView>
 
@@ -25,6 +23,7 @@
         android:id="@+id/upload_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_above="@+id/PaintView"
         android:text="upload" />
 
 
