@@ -18,7 +18,6 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -36,10 +35,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
-import com.squareup.picasso.*;
-
-import java.util.ArrayList;
-
 import android.content.Context;
 import android.widget.ImageView;
 
@@ -50,8 +45,6 @@ public class LoginFragment extends Fragment{
     private FirebaseAuth mAuth;
 
     private TextInputLayout editTextEmail, editTextPassword;
-    private ArrayList<Bitmap> userImages;
-    private boolean imagesLoaded;
 
     private Button registerButton;
     private Button signInButton;
@@ -85,23 +78,8 @@ public class LoginFragment extends Fragment{
 
                 }
             });
-
-            ArrayList<String> images_to_view = new ArrayList<String>();
-            ArrayList<Bitmap> imagesBitmaps = new ArrayList<Bitmap>();
-            Context context = this.getContext();
-            //ImageView v = new ImageView(this.getContext());
             profilePictures = view.findViewById(R.id.profile_images_layout);
-
-            if(imagesLoaded) {
-
-            }
-            else {
-                loadUserDrawings(view.getContext(), profilePictures);
-
-            }
-
-
-            //Log.d("FIREBASE REFERENCE", reference.toString());
+            loadUserDrawings(view.getContext(), profilePictures);
 
         }
         else {
@@ -132,29 +110,30 @@ public class LoginFragment extends Fragment{
     private void loadUserDrawings(Context context, LinearLayout layout) {
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("Users/" + mAuth.getCurrentUser().getUid() + "/imageList");
 
+        //For each image under a user, get a dataSnapshot and download it to memory and put it into an imageview
         reference.addChildEventListener(new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String prevChildKey) {
                 String children = dataSnapshot.getKey();
                 DatabaseReference current_ref = FirebaseDatabase.getInstance().getReference().child("Users/" + mAuth.getCurrentUser().getUid() + "/imageList" + dataSnapshot.getKey());
-                Log.d("fb", current_ref.toString());
                 String filename = (String) dataSnapshot.getValue();
                 FirebaseStorage storage = FirebaseStorage.getInstance();
                 StorageReference httpsReference = storage.getReference();
 
                 httpsReference = httpsReference.child(filename);
-                Log.d("storage red", httpsReference.toString());
-
                 final long ONE_MEGABYTE = 1024 * 1024;
                 httpsReference.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
                     @Override
                     public void onSuccess(byte[] bytes) {
                         Bitmap pic_bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
                         ImageView v = new ImageView(context);
+                        v.setPadding(20, 20, 20, 20);
+                        v.setMaxHeight(1000);
+
                         v.setAdjustViewBounds(true);
                         v.setImageBitmap(pic_bitmap);
 
-                        if(layout.getChildCount() < 5)
+                        if(layout.getChildCount() < 30)
                             layout.addView(v);
                         v = null;
                         //pic_bitmap.recycle();
@@ -182,7 +161,6 @@ public class LoginFragment extends Fragment{
             @Override
             public void onCancelled(DatabaseError databaseError) {}
         });
-        imagesLoaded = true;
     }
 
     @Override
@@ -190,12 +168,6 @@ public class LoginFragment extends Fragment{
         super.onCreate(savedInstanceState);
         Log.d(TAG, "LoginFragment onCreate()");
         mAuth = FirebaseAuth.getInstance(); // start FirebaseAuth
-        userImages = new ArrayList<Bitmap>();
-        if(mAuth.getCurrentUser() != null) {
-
-
-        }
-
     }
 
     @Override
