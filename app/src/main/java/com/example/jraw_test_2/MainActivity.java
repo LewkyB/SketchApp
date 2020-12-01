@@ -1,15 +1,20 @@
 package com.example.jraw_test_2;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
-
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
+
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import net.dean.jraw.RedditClient;
 import net.dean.jraw.http.NetworkAdapter;
@@ -22,16 +27,14 @@ import net.dean.jraw.oauth.OAuthHelper;
 import net.dean.jraw.pagination.DefaultPaginator;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.UUID;
+
 
 public class MainActivity extends AppCompatActivity {
 
     // TODO: profile page
 
-    // RedditViewer
-    // TODO: enlarge card and offer comment section with upvote/downvote
-
-    // LOGIN
     // TODO: have login screen go to another screen with registering/logging in
     // TODO: separate out login and registration?
     // TODO: skip button?
@@ -101,10 +104,13 @@ public class MainActivity extends AppCompatActivity {
 
     // AsyncTask has to be used to circumvent "no network activity on main thread" error
     // pulls data from reddit using JRAW and populates mItemList
-    private class MyTask extends AsyncTask<Void, Void, Void> {
 
+    private class MyTask extends AsyncTask<Void, Void, Void> {
         @Override
         protected Void doInBackground(Void... voids) {
+            final FirebaseDatabase database = FirebaseDatabase.getInstance();
+            DatabaseReference ref = database.getReference();
+            DatabaseReference postRef = ref.child("posts");
 
             Log.d(TAG, "starting MyTask AsyncTask");
 
@@ -115,24 +121,68 @@ public class MainActivity extends AppCompatActivity {
             RedditClient redditClient = OAuthHelper.automatic(networkAdapter, credentials);
 
             // TODO: allow for user to choose subreddits
-            DefaultPaginator<Submission> earthPorn = redditClient.subreddits("aww", "spaceporn").posts().build();
+            DefaultPaginator<Submission> redditImages = redditClient.subreddits("aww", "Eyebleach").posts().build();
 
-            Listing<Submission> submissions = earthPorn.next();
+            Listing<Submission> submissions = redditImages.next();
             for (Submission s : submissions) {
 
-                // TODO: avoid pulling gif or video
+                // avoid pulling gif or video
                 if (!s.isSelfPost() && s.getUrl().contains("jpg")) {
 
-                    String imageUrl = s.getUrl();       // URL
-//                    System.out.println(imageUrl);
-                    String postTitle = s.getTitle();    // Post Title
-                    int likeCount = s.getScore();       // Upvotes - Downvotes = Score
+                    String imageUrl = s.getUrl();       // URL;
 
-                    // add data to Item object
-                    mItemList.add(new Item(imageUrl, postTitle, likeCount));
+
+                    postRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            int exists = 0;
+                            for(DataSnapshot i : snapshot.getChildren()){
+                                HashMap<?, ?> post = (HashMap<?, ?>) i.getValue();
+                                String iUrl = null;
+                                if (post != null) {
+                                    iUrl = post.get("imageUrl").toString();
+                                    if(iUrl.equals(imageUrl)){
+                                        exists = 1;
+                                        break;
+                                    }
+                                }
+                            }
+                            if(exists == 0){
+                                postRef.push().setValue(new Post(imageUrl));
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+
+                        }
+                    });
                 }
             }
+
+            // add data to Item object
+            // Get an array of images from database Post table.
+            // Get all imageURL keys
+            final String[] image = new String[1];
+            postRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    for(DataSnapshot i : snapshot.getChildren()){
+                        HashMap<?, ?> post = (HashMap<?, ?>) i.getValue();
+                        if (post != null) {
+                            image[0] = post.get("imageUrl").toString();
+                            mItemList.add(0, new Item(image[0]));
+                        }
+                    }
+                }
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
+                }
+            });
             return null;
         }
     }
+
+
 }

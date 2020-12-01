@@ -14,7 +14,6 @@ import android.view.View;
 import java.text.AttributedCharacterIterator;
 import java.util.ArrayList;
 
-// TODO: fix paint and canvas colors
 
 public class PaintView extends View {
 

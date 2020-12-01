@@ -10,10 +10,11 @@ android {
 
     defaultConfig {
         applicationId "com.example.jraw_test_2"
-        minSdkVersion 16
+        minSdkVersion 19
         targetSdkVersion 30
         versionCode 1
         versionName "1.0"
+        multiDexEnabled true
 
         multiDexEnabled true
 
@@ -30,22 +31,44 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+
+    // for tensorflow
+    aaptOptions {
+        noCompress "tflite"
+    }
+    buildFeatures {
+        mlModelBinding true
+    }
 }
 
 dependencies {
+
+
+    // tensorflow
+    implementation 'org.tensorflow:tensorflow-lite:0.0.0-nightly'
+    implementation 'org.tensorflow:tensorflow-lite-gpu:0.0.0-nightly'
+    implementation('org.tensorflow:tensorflow-lite-support:0.1.0-rc1') { changing = true }
+    implementation 'org.tensorflow:tensorflow-lite-support:0.0.0-nightly'
+    implementation 'org.tensorflow:tensorflow-lite-metadata:0.1.0-rc1'
+    implementation 'org.tensorflow:tensorflow-lite-task-vision:0.0.0-nightly'
+    implementation 'org.tensorflow:tensorflow-lite-task-text:0.0.0-nightly'
 
     // memory leak detection
     // debugImplementation because LeakCanary should only run in debug builds.
     debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.5'
 
     implementation 'androidx.appcompat:appcompat:1.1.0'
+    implementation 'androidx.fragment:fragment:1.2.5'
     implementation 'com.google.android.material:material:1.1.0'
     implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
 
+
+    //Glide
+    implementation 'com.github.bumptech.glide:glide:4.11.0'
+    implementation 'androidx.coordinatorlayout:coordinatorlayout:1.1.0'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
     implementation 'com.android.support:multidex:1.0.3'
 
-    implementation 'com.squareup.picasso:picasso:2.5.2'
-    implementation 'com.github.bumptech.glide:glide:4.11.0'
 
     // firebase
     implementation platform('com.google.firebase:firebase-bom:26.0.0')
@@ -65,7 +88,17 @@ dependencies {
     // If you include JRAW-Android, you don't need to also include JRAW.
     implementation 'net.dean.jraw:JRAW-Android:1.1.0'
 
+    // PhotoViewAttacher From Chris Banes
+//    implementation 'com.github.chrisbanes:PhotoView:2.3.0'
+    // StfalconImageViewer
+    implementation 'com.github.stfalcon:stfalcon-imageviewer:1.0.1'
+    implementation 'com.android.support:multidex:1.0.3'
+
+
+
     // for enabling java 1.8 features
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.0.9'
+
+
 
 }
