@@ -8,23 +8,37 @@
     android:padding="8dp"
     tools:context=".PaintFragment">
 
-
     <com.example.jraw_test_2.PaintView
         android:id="@+id/PaintView"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:layout_alignParentBottom="true"
         android:layout_centerInParent="true"
-        android:background="@drawable/paintview_background">
+        android:layout_below="@id/button_row"
+        android:background="@drawable/paintview_background"/>
 
-    </com.example.jraw_test_2.PaintView>
-
-    <Button
-        android:id="@+id/upload_button"
+    <TableRow
+        android:id="@+id/button_row"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/PaintView"
-        android:text="upload" />
+        android:layout_centerHorizontal="true">
+
+        <Button
+            android:id="@+id/undo_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="4dp"
+            android:text="@string/button_pv_undo" />
+
+        <Button
+            android:id="@+id/upload_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="4dp"
+            android:text="@string/button_pv_upload" />
+
+    </TableRow>
+
+
 
 
 </RelativeLayout>

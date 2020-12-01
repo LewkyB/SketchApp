@@ -49,6 +49,7 @@ public class PaintFragment extends Fragment implements View.OnClickListener {
 
     PaintView paintView;
     private Button button;
+    public Button undoButton;
 
     Bitmap bmp;
 
@@ -62,6 +63,7 @@ public class PaintFragment extends Fragment implements View.OnClickListener {
         View view = inflater.inflate(R.layout.fragment_paint, container, false);
 
         paintView = view.findViewById(R.id.PaintView);
+        // testButton = view.findViewById(R.id.test_button);
 
         // used for testing upload functionality
         button = view.findViewById(R.id.upload_button);
@@ -74,6 +76,12 @@ public class PaintFragment extends Fragment implements View.OnClickListener {
                     e.printStackTrace();
                 }
             }
+        });
+
+        undoButton = view.findViewById(R.id.undo_button);
+        undoButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) { paintView.undo(); }
         });
 
         return view;
