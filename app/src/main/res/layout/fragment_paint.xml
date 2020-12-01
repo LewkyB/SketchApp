@@ -4,7 +4,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:gravity="center"
     android:padding="8dp"
     tools:context=".PaintFragment">
 
@@ -13,32 +12,42 @@
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_centerInParent="true"
-        android:layout_below="@id/button_row"
-        android:background="@drawable/paintview_background"/>
+        android:background="@drawable/paintview_background" />
 
     <TableRow
         android:id="@+id/button_row"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true">
+        android:layout_below="@id/PaintView"
+        android:layout_centerInParent="true">
+
+        <Button
+            android:id="@+id/clear_button"
+            style="?android:attr/buttonBarButtonStyle"
+
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="6dp"
+            android:text="@string/button_pv_clear" />
 
         <Button
             android:id="@+id/undo_button"
+            style="?android:attr/buttonBarButtonStyle"
+
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="4dp"
+            android:layout_marginHorizontal="6dp"
             android:text="@string/button_pv_undo" />
 
         <Button
             android:id="@+id/upload_button"
+            style="?android:attr/buttonBarButtonStyle"
+
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="4dp"
+            android:layout_marginHorizontal="6dp"
             android:text="@string/button_pv_upload" />
 
     </TableRow>
-
-
-
 
 </RelativeLayout>

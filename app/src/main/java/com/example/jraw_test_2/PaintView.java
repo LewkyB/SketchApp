@@ -86,6 +86,12 @@ public class PaintView extends View {
         invalidate();
     }
 
+    public void clear() {
+        paths = new ArrayList<Path>();
+        path = new Path();
+        invalidate();
+    }
+
     private void paintViewConfig() {
         Log.d(TAG, "PaintView paintViewConfig()");
 

@@ -48,8 +48,7 @@ public class PaintFragment extends Fragment implements View.OnClickListener {
     FirebaseAuth mAuth;
 
     PaintView paintView;
-    private Button button;
-    public Button undoButton;
+    public Button uploadButton, undoButton, clearButton;
 
     Bitmap bmp;
 
@@ -66,8 +65,8 @@ public class PaintFragment extends Fragment implements View.OnClickListener {
         // testButton = view.findViewById(R.id.test_button);
 
         // used for testing upload functionality
-        button = view.findViewById(R.id.upload_button);
-        button.setOnClickListener(new View.OnClickListener() {
+        uploadButton = view.findViewById(R.id.upload_button);
+        uploadButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 try {
@@ -82,6 +81,12 @@ public class PaintFragment extends Fragment implements View.OnClickListener {
         undoButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) { paintView.undo(); }
+        });
+
+        clearButton = view.findViewById(R.id.clear_button);
+        clearButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) { paintView.clear(); }
         });
 
         return view;
