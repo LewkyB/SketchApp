@@ -11,11 +11,9 @@
         android:id="@+id/linearLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="top"
         android:layout_above="@id/profile_RV"
         android:orientation="horizontal"
         android:padding="20dp"
-        tools:layout_editor_absoluteX="-16dp"
         tools:ignore="MissingConstraints">
 
         <ImageView

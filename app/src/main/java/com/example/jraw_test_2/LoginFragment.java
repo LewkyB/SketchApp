@@ -63,8 +63,6 @@ public class LoginFragment extends Fragment{
             view = inflater.inflate(R.layout.profile, container, false);
             profileEmail = (TextView) view.findViewById(R.id.profile_email);
             profileEmail.setText(mAuth.getCurrentUser().getEmail());
-            loginStatus = Toast.makeText(this.getContext(), "You are currently logged in as: " + mAuth.getCurrentUser().getEmail(), Toast.LENGTH_LONG);
-            loginStatus.show();
             logoutButton = (Button) view.findViewById(R.id.logout_button);
             logoutButton.setOnClickListener(new View.OnClickListener() {
                 @Override
