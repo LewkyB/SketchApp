@@ -1,42 +1,34 @@
 package com.example.jraw_test_2;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-
 import android.util.Log;
 import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.LinearLayout;
-import android.widget.Toast;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.FirebaseDatabase;
-
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
-import android.content.Context;
-import android.widget.ImageView;
+import java.util.ArrayList;
 
 public class LoginFragment extends Fragment{
 
@@ -53,7 +45,10 @@ public class LoginFragment extends Fragment{
     private Toast loginStatus;
     private Button logoutButton;
     private TextView profileEmail;
-    private LinearLayout profilePictures;
+    private RecyclerView profilePicturesRV;
+    private Adapter mAdapter;
+    private String urlBase = "gs://jrawtest.appspot.com";
+    private final ArrayList<Item> mItemList = new ArrayList<>();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -78,8 +73,38 @@ public class LoginFragment extends Fragment{
 
                 }
             });
-            profilePictures = view.findViewById(R.id.profile_images_layout);
-            loadUserDrawings(view.getContext(), profilePictures);
+            profilePicturesRV = view.findViewById(R.id.profile_RV);
+            profilePicturesRV.setHasFixedSize(true);
+            profilePicturesRV.setLayoutManager(new GridLayoutManager(view.getContext(), 2));
+
+            //Get images only from current user.
+            DatabaseReference reference = FirebaseDatabase.getInstance()
+                    .getReference()
+                    .child("Users/" + mAuth.getCurrentUser().getUid() + "/imageList");
+
+            //For each image under a user, get a dataSnapshot and download it to memory and put it into an imageview
+            reference.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    for(DataSnapshot image : snapshot.getChildren()){
+                        if(image != null) {
+                            String imgAddress = (String) image.getValue();
+                            imgAddress = urlBase + '/' + imgAddress;
+                            mItemList.add(0, new Item(imgAddress));
+                        }
+                        if(!mItemList.isEmpty()){
+                            mAdapter = new Adapter(getContext(), mItemList);
+                            profilePicturesRV.setAdapter(mAdapter);
+                        }
+                    }
+
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
+                }
+            });
 
         }
         else {
@@ -105,62 +130,6 @@ public class LoginFragment extends Fragment{
             });
         }
         return view;
-    }
-
-    private void loadUserDrawings(Context context, LinearLayout layout) {
-        DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child("Users/" + mAuth.getCurrentUser().getUid() + "/imageList");
-
-        //For each image under a user, get a dataSnapshot and download it to memory and put it into an imageview
-        reference.addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String prevChildKey) {
-                String children = dataSnapshot.getKey();
-                DatabaseReference current_ref = FirebaseDatabase.getInstance().getReference().child("Users/" + mAuth.getCurrentUser().getUid() + "/imageList" + dataSnapshot.getKey());
-                String filename = (String) dataSnapshot.getValue();
-                FirebaseStorage storage = FirebaseStorage.getInstance();
-                StorageReference httpsReference = storage.getReference();
-
-                httpsReference = httpsReference.child(filename);
-                final long ONE_MEGABYTE = 1024 * 1024;
-                httpsReference.getBytes(ONE_MEGABYTE).addOnSuccessListener(new OnSuccessListener<byte[]>() {
-                    @Override
-                    public void onSuccess(byte[] bytes) {
-                        Bitmap pic_bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                        ImageView v = new ImageView(context);
-                        v.setPadding(20, 20, 20, 20);
-                        v.setMaxHeight(1000);
-
-                        v.setAdjustViewBounds(true);
-                        v.setImageBitmap(pic_bitmap);
-
-                        if(layout.getChildCount() < 30)
-                            layout.addView(v);
-                        v = null;
-                        //pic_bitmap.recycle();
-                        bytes = null;
-
-
-                    }
-                }).addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception exception) {
-                        // Handle any errors
-                    }
-                });
-            }
-
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String prevChildKey) {}
-
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {}
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String prevChildKey) {}
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {}
-        });
     }
 
     @Override
@@ -300,12 +269,4 @@ public class LoginFragment extends Fragment{
         return valid;
     }
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        if(profilePictures != null) {
-            profilePictures.removeAllViews();
-            profilePictures = null;
-        }
-    }
 }
