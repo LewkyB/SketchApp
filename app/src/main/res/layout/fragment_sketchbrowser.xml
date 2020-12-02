@@ -6,12 +6,12 @@
     android:orientation="vertical"
     android:gravity="center"
     android:padding="0dp"
-    android:background="@color/raisinBlack">
+    android:background="@color/fui_transparent">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/sketch_browser"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/raisinBlack" />
+        android:background="@color/fui_transparent" />
 
 </RelativeLayout>
