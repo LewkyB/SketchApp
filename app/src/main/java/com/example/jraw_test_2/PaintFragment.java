@@ -1,8 +1,11 @@
 package com.example.jraw_test_2;
 
+import android.app.FragmentManager;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +15,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -48,7 +52,6 @@ public class PaintFragment extends Fragment implements View.OnClickListener {
         View view = inflater.inflate(R.layout.fragment_paint, container, false);
 
         paintView = view.findViewById(R.id.PaintView);
-        // testButton = view.findViewById(R.id.test_button);
 
         // used for testing upload functionality
         uploadButton = view.findViewById(R.id.upload_button);
@@ -60,6 +63,12 @@ public class PaintFragment extends Fragment implements View.OnClickListener {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+
+                // change to profile fragment after uploading image
+                FragmentTransaction fragmentTransaction = getActivity().getSupportFragmentManager().beginTransaction();
+                fragmentTransaction.replace(R.id.fragment_container, new LoginFragment());
+                fragmentTransaction.addToBackStack(null);
+                fragmentTransaction.commit();
             }
         });
 
@@ -72,7 +81,23 @@ public class PaintFragment extends Fragment implements View.OnClickListener {
         clearButton = view.findViewById(R.id.clear_button);
         clearButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) { paintView.clear(); }
+            public void onClick(View v) {
+
+                final Handler handler = new Handler();
+                final Runnable r = new Runnable() {
+                    @Override
+                    public void run() {
+                        Fragment currentFragment = getParentFragmentManager().findFragmentById(R.id.fragment_container);
+                        FragmentTransaction fragmentTransaction = getParentFragmentManager().beginTransaction();
+                        fragmentTransaction.detach(currentFragment);
+                        fragmentTransaction.attach(currentFragment);
+                        fragmentTransaction.commit();
+                    }
+                };
+
+                // used to wait
+                handler.postDelayed(r, 500);
+            }
         });
 
         return view;
@@ -141,7 +166,13 @@ public class PaintFragment extends Fragment implements View.OnClickListener {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
                 Log.d(TAG, "Firebase storeBitmap:success");
-                Toast.makeText(getContext(), "Upload Success!", Toast.LENGTH_LONG).show();
+
+                // used loop to keep toast longer than 2 seconds, instead it's now 6 seconds
+                for (int i = 0; i < 3; i++) {
+                    Toast t = Toast.makeText(getContext(), out.identifier.toUpperCase() + " with a probability of " + (int) (out.probability * 100)+"%", Toast.LENGTH_SHORT);
+                    t.setGravity(Gravity.BOTTOM | Gravity.CENTER, 0, 0);
+                    t.show();
+                }
 
                 // add image's randomUUID to list of images the user has submitted
                 FirebaseDatabase.getInstance().getReference("Users")

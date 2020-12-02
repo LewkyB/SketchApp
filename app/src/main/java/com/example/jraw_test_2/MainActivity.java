@@ -43,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
 
     public ArrayList<Item> mItemList;
     public Bundle itemBundle;
-
+    public BottomNavigationView bottomNav;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,8 +61,12 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         // used for changing fragments with bottomNav selection
-        BottomNavigationView bottomNav = findViewById(R.id.bottom_navigation);
+        bottomNav = findViewById(R.id.bottom_navigation);
         bottomNav.setOnNavigationItemSelectedListener(navListener);
+
+        // hide browser buttons while MyTask() finishes
+        bottomNav.getMenu().findItem(R.id.nav_browser).setVisible(false);
+        bottomNav.getMenu().findItem(R.id.nav_sketchBrowser).setVisible(false);
 
         // set default fragment
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container,
@@ -185,6 +189,16 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
             return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+
+            // show both browser buttons after MyTask() finishes
+            bottomNav.getMenu().findItem(R.id.nav_browser).setVisible(true);
+            bottomNav.getMenu().findItem(R.id.nav_sketchBrowser).setVisible(true);
+
         }
     }
 
