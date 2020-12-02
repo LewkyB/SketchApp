@@ -96,10 +96,10 @@ public class PaintView extends View {
         Log.d(TAG, "PaintView paintViewConfig()");
 
         mPaint.setAntiAlias(true);
-        mPaint.setColor(Color.RED);
+        mPaint.setColor(Color.BLACK);
         mPaint.setStyle(Paint.Style.STROKE);
         mPaint.setStrokeJoin(Paint.Join.ROUND);
-        mPaint.setStrokeWidth(6f);
+        mPaint.setStrokeWidth(18f);
 
     }
 }

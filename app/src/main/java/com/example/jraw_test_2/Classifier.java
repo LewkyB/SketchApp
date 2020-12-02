@@ -89,8 +89,6 @@ public class Classifier {
         //We will print the output
         int maxProbabilityIndex = 0;
         for(int i = 0; i < classes.length; i++) {
-            Log.d("Classification Out", classes[i] + ": " + probabilityBuffer.getFloatArray()[i] / 255);
-
             if(probabilityBuffer.getFloatArray()[i] > probabilityBuffer.getFloatArray()[maxProbabilityIndex])
                 maxProbabilityIndex = i;
         }
