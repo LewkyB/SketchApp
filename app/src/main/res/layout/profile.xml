@@ -28,7 +28,7 @@
         android:orientation="horizontal"
         android:padding="20dp"
         tools:layout_editor_absoluteX="-16dp">
-
+ 
         <ImageView
             android:id="@+id/imageView"
             android:layout_width="wrap_content"
