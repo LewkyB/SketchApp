@@ -1,6 +1,9 @@
 package com.example.jraw_test_2;
 
 import android.os.Bundle;
+
+import android.os.Handler;
+
 import android.util.Log;
 import android.util.Patterns;
 import android.view.LayoutInflater;
@@ -55,8 +58,6 @@ public class LoginFragment extends Fragment{
                              Bundle savedInstanceState) {
         Log.d(TAG, "LoginFragment onCreateView()");
         View view;
-
-
 
         if(mAuth.getCurrentUser() != null) {
             Log.d("LOGIN", "Currently logged in as: " + mAuth.getCurrentUser().getEmail());
@@ -123,7 +124,24 @@ public class LoginFragment extends Fragment{
             signInButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+
+                    // using handler and runnable to cause delay while waiting on database communication
+                    final Handler handler = new Handler();
+                    final Runnable r = new Runnable() {
+                        @Override
+                        public void run() {
+                            Fragment currentFragment = getParentFragmentManager().findFragmentById(R.id.fragment_container);
+                            FragmentTransaction fragmentTransaction = getParentFragmentManager().beginTransaction();
+                            fragmentTransaction.detach(currentFragment);
+                            fragmentTransaction.attach(currentFragment);
+                            fragmentTransaction.commit();
+                        }
+                    };
+
                     signIn();
+
+                    // wait for signIn() to communicate with firebase then refresh the current fragment
+                    handler.postDelayed(r, 500);
                 }
             });
         }
@@ -203,15 +221,12 @@ public class LoginFragment extends Fragment{
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (task.isSuccessful()) {
                     Log.d(TAG, "signInWithEmail:success");
-                    Toast.makeText(getContext(), "Sign in success!", Toast.LENGTH_LONG).show();
-                    FragmentManager m = getFragmentManager();
                 } else {
                     Log.d(TAG, "signInWithEmail:failure", task.getException());
                     Toast.makeText(getContext(), "Sign in failure!", Toast.LENGTH_LONG).show();
                 }
             }
         });
-        getFragmentManager().beginTransaction().detach(this).attach(this).commit();
 
         return;
     }

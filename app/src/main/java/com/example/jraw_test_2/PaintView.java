@@ -31,8 +31,7 @@ public class PaintView extends View {
         path = new Path();
         paths = new ArrayList<Path>();
         mPaint = new Paint();
-        paintViewConfig(); // setup Paint
-
+        paintViewConfig(); // setup Paint details like brush size
     }
 
     @Override
@@ -99,7 +98,6 @@ public class PaintView extends View {
         mPaint.setColor(Color.BLACK);
         mPaint.setStyle(Paint.Style.STROKE);
         mPaint.setStrokeJoin(Paint.Join.ROUND);
-        mPaint.setStrokeWidth(18f);
-
+        mPaint.setStrokeWidth(16f);
     }
 }
