@@ -83,6 +83,9 @@ public class MainActivity extends AppCompatActivity {
                             itemBundle.putParcelableArrayList("redditItemList", mItemList);
                             selectedFragment.setArguments(itemBundle);
                             break;
+                        case R.id.nav_sketchBrowser:
+                            selectedFragment = new SketchBrowserFragment();
+                            break;
                         case R.id.nav_canvas:
                             selectedFragment = new PaintFragment();
                             break;
@@ -90,6 +93,7 @@ public class MainActivity extends AppCompatActivity {
                             // TODO: create profile and switch LoginFragment() with ProfileFragment()
                             selectedFragment = new LoginFragment();
                             break;
+
                     }
 
                     // sets fragment based on case
@@ -131,7 +135,7 @@ public class MainActivity extends AppCompatActivity {
 
                     String imageUrl = s.getUrl();       // URL;
 
-
+                    // open database and save the post imgs.
                     postRef.addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -170,8 +174,8 @@ public class MainActivity extends AppCompatActivity {
                     for(DataSnapshot i : snapshot.getChildren()){
                         HashMap<?, ?> post = (HashMap<?, ?>) i.getValue();
                         if (post != null) {
-                            image[0] = post.get("imageUrl").toString();
-                            mItemList.add(0, new Item(image[0]));
+                            image[0] = (String) post.get("imageUrl");
+                            if(image[0].contains("http")) mItemList.add(0, new Item(image[0]));
                         }
                     }
                 }
