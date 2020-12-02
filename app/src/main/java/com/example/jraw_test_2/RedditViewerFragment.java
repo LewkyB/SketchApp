@@ -25,7 +25,6 @@ public class RedditViewerFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        Log.d(TAG, "onCreateView");
         itemBundle = new Bundle();
         mItemList = new ArrayList<>();
 
@@ -47,7 +46,6 @@ public class RedditViewerFragment extends Fragment {
             mItemList = itemBundle.getParcelableArrayList("redditItemList");
             mAdapter = new Adapter(getContext(), mItemList);
             mRecyclerView.setAdapter(mAdapter);
-            Log.d(TAG, "setAdapter:success");
         } else {
             Log.d(TAG, "setAdapter:failed");
         }

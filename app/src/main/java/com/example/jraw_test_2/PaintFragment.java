@@ -1,9 +1,6 @@
 package com.example.jraw_test_2;
 
-import com.example.jraw_test_2.Classifier;
-
 import android.graphics.Bitmap;
-import android.graphics.ColorSpace;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -11,18 +8,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.Toast;
-import android.app.Activity;
-import android.content.res.AssetFileDescriptor;
-
-import android.graphics.BitmapFactory;
-
-import java.io.*;
-import java.nio.channels.*;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
@@ -35,7 +22,6 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -158,6 +144,9 @@ public class PaintFragment extends Fragment implements View.OnClickListener {
                         }
                     }
                 });
+                FirebaseDatabase.getInstance().getReference().child("posts")
+                        .push()
+                        .setValue(new Post(randomUUID));
             }
         });
     }

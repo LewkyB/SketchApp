@@ -3,8 +3,12 @@
 
     <item
         android:id="@+id/nav_browser"
-        android:icon="@drawable/ic_baseline_chrome_reader_mode_24"
+        android:icon="@drawable/ic_baseline_fireplace_24"
         android:title="@string/button_nav_browser"/>
+    <item
+        android:id="@+id/nav_sketchBrowser"
+        android:icon="@drawable/ic_baseline_chrome_reader_mode_24"
+        android:title="Sketch Browser"/>
     <item
         android:id="@+id/nav_canvas"
         android:icon="@drawable/ic_baseline_brush_24"

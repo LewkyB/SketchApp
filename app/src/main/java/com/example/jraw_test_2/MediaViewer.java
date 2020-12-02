@@ -35,6 +35,8 @@ public class MediaViewer extends AppCompatActivity {
     private String commentString;
     private ArrayList<CommentItem> commentList;
     private Bundle bundle = new Bundle();
+    private String urlBase = "jrawtest.appspot.com";
+
 
     public MediaViewer (){
         super(viewer_media);
@@ -80,23 +82,46 @@ public class MediaViewer extends AppCompatActivity {
                     .getReference();
 
             final String[] postKey = new String[1];
-            ref.child("posts")
-                    .orderByChild("imageUrl")
-                    .equalTo(imgUrl)
-                    .addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot snapshot) {
-                            HashMap<?, ?> post = (HashMap<?, ?>) snapshot.getValue();
-                            if(post!=null) {
-                                for(Object key : post.keySet()){
-                                    postKey[0] = key.toString();
+            //Check to make sure its a reddit post or a Sketch.
+            if(!imgUrl.contains(urlBase)) {
+                ref.child("posts")
+                        .orderByChild("imageUrl")
+                        .equalTo(imgUrl)
+                        .addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                HashMap<?, ?> post = (HashMap<?, ?>) snapshot.getValue();
+                                if (post != null) {
+                                    for (Object key : post.keySet()) {
+                                        postKey[0] = key.toString();
+                                    }
                                 }
                             }
-                        }
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError error) {
-                        }
-                    });
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+                            }
+                        });
+            }else{
+                ref.child("posts")
+                        .orderByChild("imageUrl")
+                        .addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                for(DataSnapshot i : snapshot.getChildren()) {
+                                    HashMap<?, ?> post = (HashMap<?, ?>) i.getValue();
+                                    String imageUUID = post.get("imageUrl").toString();
+                                    if (imgUrl.contains(imageUUID)) {
+                                        postKey[0] = (String) i.getKey();
+                                    }
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+                            }
+                        });
+            }
 
             newComment = (EditText)findViewById(R.id.newComment);
             newComment.setOnKeyListener(new EditText.OnKeyListener(){
@@ -160,29 +185,59 @@ public class MediaViewer extends AppCompatActivity {
         DatabaseReference ref = FirebaseDatabase
                 .getInstance()
                 .getReference("posts");
-
-        ref.orderByChild("imageUrl")
-                .equalTo(imageUrl)
-                .addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        for(DataSnapshot i : snapshot.getChildren()) {
-                            HashMap<?, ?> snapHash = (HashMap<?, ?>) i.getValue();
-                            HashMap<?, ?> commentHash = (HashMap<?, ?>) snapHash.get("comments");
-                            if(commentHash != null) {
-                                for (Object key : commentHash.keySet()) {
-                                    HashMap<?, ?> comments = (HashMap<?, ?>) commentHash.get(key.toString());
-                                    returnList.add(0, new CommentItem(
-                                            comments.get("username").toString(),
-                                            comments.get("commentText").toString()));
+        //If the imageURL contains the urlBase (see above) then it is a Sketch.
+        if(imageUrl.contains(urlBase)){
+            ref.orderByChild("imageUrl")
+                    .addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            for (DataSnapshot i : snapshot.getChildren()) {
+                                HashMap<?, ?> snapHash = (HashMap<?, ?>) i.getValue();
+                                String imageUUID = (String) snapHash.get("imageUrl");
+                                if(imageUrl.contains(imageUUID)) {
+                                    HashMap<?, ?> commentHash = (HashMap<?, ?>) snapHash.get("comments");
+                                    if (commentHash != null) {
+                                        for (Object key : commentHash.keySet()) {
+                                            HashMap<?, ?> comments = (HashMap<?, ?>) commentHash.get(key.toString());
+                                            returnList.add(0, new CommentItem(
+                                                    comments.get("username").toString(),
+                                                    comments.get("commentText").toString()));
+                                        }
+                                    }
                                 }
                             }
                         }
-                    }
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-                    }
-                });
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+                        }
+                    });
+        } else {
+            // It is a reddit file, so just grab the comments under the post.
+            ref.orderByChild("imageUrl")
+                    .equalTo(imageUrl)
+                    .addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            for (DataSnapshot i : snapshot.getChildren()) {
+                                HashMap<?, ?> snapHash = (HashMap<?, ?>) i.getValue();
+                                HashMap<?, ?> commentHash = (HashMap<?, ?>) snapHash.get("comments");
+                                if (commentHash != null) {
+                                    for (Object key : commentHash.keySet()) {
+                                        HashMap<?, ?> comments = (HashMap<?, ?>) commentHash.get(key.toString());
+                                        returnList.add(0, new CommentItem(
+                                                comments.get("username").toString(),
+                                                comments.get("commentText").toString()));
+                                    }
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+                        }
+                    });
+        }
         return returnList;
     }
 }
