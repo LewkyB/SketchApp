@@ -68,8 +68,6 @@ public class LoginFragment extends Fragment{
             view = inflater.inflate(R.layout.profile, container, false);
             profileEmail = (TextView) view.findViewById(R.id.profile_email);
             profileEmail.setText(mAuth.getCurrentUser().getEmail());
-            loginStatus = Toast.makeText(this.getContext(), "You are currently logged in as: " + mAuth.getCurrentUser().getEmail(), Toast.LENGTH_LONG);
-            loginStatus.show();
             logoutButton = (Button) view.findViewById(R.id.logout_button);
             logoutButton.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -118,7 +116,6 @@ public class LoginFragment extends Fragment{
 
                     // wait for signIn() to communicate with firebase then refresh the current fragment
                     handler.postDelayed(r, 500);
-
                 }
             });
         }
@@ -156,7 +153,6 @@ public class LoginFragment extends Fragment{
                         v = null;
                         //pic_bitmap.recycle();
                         bytes = null;
-
 
                     }
                 }).addOnFailureListener(new OnFailureListener() {
@@ -253,16 +249,13 @@ public class LoginFragment extends Fragment{
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if (task.isSuccessful()) {
-//                    Log.d(TAG, "signInWithEmail:success");
-//                    Toast.makeText(getContext(), "Sign in success!", Toast.LENGTH_LONG).show();
-//                    FragmentManager m = getFragmentManager();
+                    Log.d(TAG, "signInWithEmail:success");
                 } else {
                     Log.d(TAG, "signInWithEmail:failure", task.getException());
                     Toast.makeText(getContext(), "Sign in failure!", Toast.LENGTH_LONG).show();
                 }
             }
         });
-//        getFragmentManager().beginTransaction().detach(this).attach(this).commit();
 
         return;
     }
