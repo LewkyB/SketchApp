@@ -2,21 +2,48 @@
 
 
 ## TODO
+
+### general
+- [ ] splash screen
+- [ ] settings page - theme choice
+- [ ] dependency injection w/ dagger 2
+- [ ] replace hide fragment buttons w/ refresh method
+
+### User Management
+= [ ] post management
+- [ ] admin users for post management
+- [ ] reporting system
+
+### browsers
+- [ ] sort by date/score/controversial
+- [ ] redditbrowser - sort by subreddit
+- [ ] drawingbrowser - sort by type
+= [ ] upvote/downvote
+- [ ] redditbrowser - implement endless scrolling (using JRAW to pull more reddit images)
+
+### Database
+- [ ] how many urls stored is too many?
+
+### comments
+= [ ] upvote/downvote
+
+### login
+- [ ] improved login - banner and resize on keyboard
+- [ ] friends/followers
+
+### social
+- [ ] friends/followers
+
+### Complete
 - [x] reddit browser
 - [x] login/registration fragments
 - [x] implement firebase
-- [ ] add ML files
+- [x] add ML files
 - [x] blow up view when selecting RecyclerView item
-- [ ] comment system using firebase
-- [ ] show comments in recyclerview selection
+- [x] comment system using firebase
+- [x] show comments in recyclerview selection
 - [x] implement canvas
-- [ ] save canvas path variable locally
-- [ ] add doodle browser to bottom navigation bar
-- [ ] RecyclerView for showing doodles saved on firebase database
-- [ ] profile page (maybe have login and profile share the same space in the bottom nav bar, but have the buttons swap from login to profile once logged in)
-- [ ] admin users for post management
-
-## hardmode TODO
-- [ ] friends/followers
-- [ ] reporting system
-- [ ] implement endless scrolling in the browser fragments (doing this with fragments is hard, but much easier with activities)
+- [x] save canvas as bitmap
+- [x] add doodle browser to bottom navigation bar
+- [x] RecyclerView for showing doodles saved on firebase database
+- [x] profile page
