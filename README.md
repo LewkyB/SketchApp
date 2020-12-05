@@ -10,7 +10,7 @@
 - [ ] replace hide fragment buttons w/ refresh method
 
 ### User Management
-= [ ] post management
+- [ ] post management
 - [ ] admin users for post management
 - [ ] reporting system
 
@@ -25,7 +25,7 @@
 - [ ] how many urls stored is too many?
 
 ### comments
-= [ ] upvote/downvote
+- [ ] upvote/downvote
 
 ### login
 - [ ] improved login - banner and resize on keyboard
