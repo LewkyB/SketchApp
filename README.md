@@ -1,7 +1,5 @@
 # SketchApp
 
-## About ##
-
 SketchApp is an android application that lets you browse Reddit for cute image inspiration then you can use the canvas tool to create your own cute animal sketches. When you submit your sketch, it goes through a tensorflow model that was trained with google doodles to identify which animal was drawn. After pushing the upload button it will show which animal it thinks you drew. That newly created user image is available for viewing and discussion via the Sketch Browser. The Reddit browser uses the JRAW API wrapper. For the database, it uses Firebase for users, comments, and storing images/urls. Images are shown in a recycler view using Glide. There is one main activity that serves up the different fragments. 
 
 <p align="center">
