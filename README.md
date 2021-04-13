@@ -1,4 +1,4 @@
-# jraw_test_2
+# SketchApp
 
 ## About ##
 
